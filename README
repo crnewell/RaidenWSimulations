@@ -1,0 +1,8 @@
+activate virtual environment, and run
+pip install -r requirements.txt
+
+Then activate the virtual environment with
+./venv/Scripts/activate 
+
+Then run
+python main.py
