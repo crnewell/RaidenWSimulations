@@ -34,7 +34,7 @@ maze = [
 ]
 
 # Player's starting position
-player_pos = [1, 1]  # Row, Col
+player_pos = [0, 1]  # Row, Col
 
 # Set up the display
 screen = pygame.display.set_mode((WINDOW_SIZE, WINDOW_SIZE))
@@ -55,27 +55,42 @@ def draw_player():
 
 # Main loop
 running = True
+clock = pygame.time.Clock()
+move_direction = None
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
-                new_pos = [player_pos[0] - 1, player_pos[1]]
-                if maze[new_pos[0]][new_pos[1]] == 0:
-                    player_pos = new_pos
+                move_direction = "UP"
             elif event.key == pygame.K_DOWN:
-                new_pos = [player_pos[0] + 1, player_pos[1]]
-                if maze[new_pos[0]][new_pos[1]] == 0:
-                    player_pos = new_pos
+                move_direction = "DOWN"
             elif event.key == pygame.K_LEFT:
-                new_pos = [player_pos[0], player_pos[1] - 1]
-                if maze[new_pos[0]][new_pos[1]] == 0:
-                    player_pos = new_pos
+                move_direction = "LEFT"
             elif event.key == pygame.K_RIGHT:
-                new_pos = [player_pos[0], player_pos[1] + 1]
-                if maze[new_pos[0]][new_pos[1]] == 0:
-                    player_pos = new_pos
+                move_direction = "RIGHT"
+        elif event.type == pygame.KEYUP:
+            move_direction = None
+
+    # Move the player continuously in the held direction
+    if move_direction == "UP":
+        new_pos = [player_pos[0] - 1, player_pos[1]]
+        if maze[new_pos[0]][new_pos[1]] == 0:
+            player_pos = new_pos
+    elif move_direction == "DOWN":
+        new_pos = [player_pos[0] + 1, player_pos[1]]
+        if maze[new_pos[0]][new_pos[1]] == 0:
+            player_pos = new_pos
+    elif move_direction == "LEFT":
+        new_pos = [player_pos[0], player_pos[1] - 1]
+        if maze[new_pos[0]][new_pos[1]] == 0:
+            player_pos = new_pos
+    elif move_direction == "RIGHT":
+        new_pos = [player_pos[0], player_pos[1] + 1]
+        if maze[new_pos[0]][new_pos[1]] == 0:
+            player_pos = new_pos
 
     # Draw the maze and the player
     screen.fill(WHITE)
@@ -84,6 +99,9 @@ while running:
 
     # Update the display
     pygame.display.flip()
+
+    # Limit frame rate
+    clock.tick(10)
 
 # Quit Pygame
 pygame.quit()
