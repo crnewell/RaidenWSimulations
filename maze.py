@@ -27,6 +27,10 @@ TREE_NODE_RADIUS = 10;
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
+BLUE = (0, 0, 255)  # Up move
+GREEN = (0, 255, 0)  # Down move
+YELLOW = (255, 255, 0)  # Left move
+PURPLE = (128, 0, 128)  # Right move
 
 # Maze array (1s are walls, 0s are paths)
 maze = [
@@ -71,10 +75,14 @@ def draw_player():
 
 
 def add_node(new_direction):
+    global current_node
+    # TODO: change the domain so that if a node has one child then it has full domain
     new_node = Node(
         xpos=(current_node.left_domain + current_node.xpos) // 2,
         ypos=current_node.ypos + TREE_NODE_RADIUS * 3, 
-        dir_to= new_direction)  # Example for moving up
+        dir_to= new_direction,  # Example for moving up
+        left_domain= current_node.left_domain,
+        right_domain=current_node.xpos)
     current_node.children.append(new_node)
     current_node = new_node
 
@@ -84,7 +92,17 @@ def add_node(new_direction):
 def draw_subtree(subtreeroot):
     # TODO CHANGE COLOR TO BE BASED ON DIRECTION TO
     # TODO: change color to show current node highlighted
-    pygame.draw.circle(screen, BLACK, (subtreeroot.xpos,subtreeroot.ypos), TREE_NODE_RADIUS)
+    if subtreeroot.dir_to == "UP":
+        color = BLUE
+    elif subtreeroot.dir_to == "DOWN":
+        color = GREEN
+    elif subtreeroot.dir_to == "LEFT":
+        color = YELLOW
+    elif subtreeroot.dir_to == "RIGHT":
+        color = PURPLE
+    else:
+        color = BLACK
+    pygame.draw.circle(screen, color, (subtreeroot.xpos,subtreeroot.ypos), TREE_NODE_RADIUS)
     for node in  subtreeroot.children:
         draw_subtree(node)
 
