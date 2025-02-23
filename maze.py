@@ -10,6 +10,7 @@ class Node:
     left_domain: int
     right_domain: int
     dir_to: Optional[str]  # Direction moved to reach this node
+    parent: Optional["Node"] = None
     children: List["Node"] = field(default_factory=list)
 
 
@@ -76,21 +77,25 @@ def draw_player():
 
 def add_node(new_direction):
     global current_node
-    # TODO: change the domain so that if a node has one child then it has full domain
-    new_node = Node(
-        xpos=(current_node.left_domain + current_node.xpos) // 2,
-        ypos=current_node.ypos + TREE_NODE_RADIUS * 3, 
-        dir_to= new_direction,  # Example for moving up
-        left_domain= current_node.left_domain,
-        right_domain=current_node.xpos)
-    current_node.children.append(new_node)
-    current_node = new_node
+    # check that a node does need to be added
+    if (new_direction == "RIGHT" and current_node.dir_to == "LEFT") or (new_direction == "LEFT" and current_node.dir_to == "RIGHT") or (new_direction == "DOWN" and current_node.dir_to == "UP") or (new_direction == "UP" and current_node.dir_to == "DOWN"):
+        current_node = current_node.parent
+    else:
+        # TODO: change the domain so that if a node has one child then it has full domain
+        new_node = Node(
+            xpos=(current_node.left_domain + current_node.xpos) // 2,
+            ypos=current_node.ypos + TREE_NODE_RADIUS * 3, 
+            dir_to= new_direction,  # Example for moving up
+            left_domain= current_node.left_domain,
+            right_domain=current_node.xpos,
+            parent= current_node)
+        current_node.children.append(new_node)
+        current_node = new_node
 
 
 
 
 def draw_subtree(subtreeroot):
-    # TODO CHANGE COLOR TO BE BASED ON DIRECTION TO
     # TODO: change color to show current node highlighted
     if subtreeroot.dir_to == "UP":
         color = BLUE
