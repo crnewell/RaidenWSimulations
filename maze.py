@@ -1,11 +1,28 @@
 import pygame
 import sys
+from dataclasses import dataclass, field
+from typing import List, Optional
+
+@dataclass
+class Node:
+    xpos: int
+    ypos: int
+    left_domain: int
+    right_domain: int
+    dir_to: Optional[str]  # Direction moved to reach this node
+    children: List["Node"] = field(default_factory=list)
+
+
 
 pygame.init()
 
-WINDOW_SIZE = 500  
-GRID_SIZE = 15   
-CELL_SIZE = WINDOW_SIZE // GRID_SIZE  
+# Constants
+WINDOW_WIDTH = 1200  # Increased width to fit tree
+WINDOW_HEIGHT = 600
+GRID_SIZE = 15     # Number of rows and columns in the maze
+CELL_SIZE = WINDOW_HEIGHT // GRID_SIZE  # Size of each cell
+TREE_X_OFFSET = (WINDOW_HEIGHT+WINDOW_WIDTH)//2  # Offset for tree visualization
+TREE_NODE_RADIUS = 10;
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -32,8 +49,13 @@ maze = [
 
 #starting position
 player_pos = [0, 1]  
+root_pos = TREE_X_OFFSET
+root = Node(xpos=root_pos, ypos=TREE_NODE_RADIUS, dir_to=None, left_domain=WINDOW_HEIGHT + TREE_NODE_RADIUS, right_domain= WINDOW_WIDTH - TREE_NODE_RADIUS)
+current_node = root
 
-screen = pygame.display.set_mode((WINDOW_SIZE, WINDOW_SIZE))
+
+
+screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("15x15 Maze")
 
 def draw_maze():
@@ -46,6 +68,32 @@ def draw_player():
     pygame.draw.rect(
         screen, RED, (player_pos[1] * CELL_SIZE, player_pos[0] * CELL_SIZE, CELL_SIZE, CELL_SIZE)
     )
+
+
+def add_node(new_direction):
+    new_node = Node(
+        xpos=(current_node.left_domain + current_node.xpos) // 2,
+        ypos=current_node.ypos + TREE_NODE_RADIUS * 3, 
+        dir_to= new_direction)  # Example for moving up
+    current_node.children.append(new_node)
+    current_node = new_node
+
+
+
+
+def draw_subtree(subtreeroot):
+    # TODO CHANGE COLOR TO BE BASED ON DIRECTION TO
+    # TODO: change color to show current node highlighted
+    pygame.draw.circle(screen, BLACK, (subtreeroot.xpos,subtreeroot.ypos), TREE_NODE_RADIUS)
+    for node in  subtreeroot.children:
+        draw_subtree(node)
+
+
+def draw_tree():
+    draw_subtree(root)
+
+
+
 
 # Main loop
 running = True
@@ -69,27 +117,33 @@ while running:
             move_direction = None
 
     # Move the player continuously in the held direction
+    # TODO: update to include going reverse in the tree
     if move_direction == "UP":
         new_pos = [player_pos[0] - 1, player_pos[1]]
         if maze[new_pos[0]][new_pos[1]] == 0:
             player_pos = new_pos
+            add_node(move_direction)
     elif move_direction == "DOWN":
         new_pos = [player_pos[0] + 1, player_pos[1]]
         if maze[new_pos[0]][new_pos[1]] == 0:
+            add_node(move_direction)
             player_pos = new_pos
     elif move_direction == "LEFT":
         new_pos = [player_pos[0], player_pos[1] - 1]
         if maze[new_pos[0]][new_pos[1]] == 0:
+            add_node(move_direction)
             player_pos = new_pos
     elif move_direction == "RIGHT":
         new_pos = [player_pos[0], player_pos[1] + 1]
         if maze[new_pos[0]][new_pos[1]] == 0:
+            add_node(move_direction)
             player_pos = new_pos
 
     # Drawing maze
     screen.fill(WHITE)
     draw_maze()
     draw_player()
+    draw_tree();
 
     # Update the display
     pygame.display.flip()
