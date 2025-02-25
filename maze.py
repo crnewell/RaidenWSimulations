@@ -82,13 +82,24 @@ def add_node(new_direction):
         current_node = current_node.parent
     else:
         # TODO: change the domain so that if a node has one child then it has full domain
-        new_node = Node(
-            xpos=(current_node.left_domain + current_node.xpos) // 2,
-            ypos=current_node.ypos + TREE_NODE_RADIUS * 3, 
-            dir_to= new_direction,  # Example for moving up
-            left_domain= current_node.left_domain,
-            right_domain=current_node.xpos,
-            parent= current_node)
+        # adding a child on the left
+        if len(current_node.children)== 0:
+            new_node = Node(
+                xpos=(current_node.left_domain + current_node.xpos) // 2,
+                ypos=current_node.ypos + TREE_NODE_RADIUS * 3, 
+                dir_to= new_direction,
+                left_domain= current_node.left_domain,
+                right_domain=current_node.xpos,
+                parent= current_node)
+        #adding a child on the right
+        else:
+            new_node = Node(
+                xpos=(current_node.right_domain + current_node.xpos) // 2,
+                ypos=current_node.ypos + TREE_NODE_RADIUS * 3, 
+                dir_to= new_direction,
+                left_domain= current_node.xpos,
+                right_domain=current_node.right_domain,
+                parent= current_node)
         current_node.children.append(new_node)
         current_node = new_node
 
