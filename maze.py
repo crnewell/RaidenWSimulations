@@ -55,8 +55,9 @@ maze = [
 # initiate preprocessing:
 # create the tree according to the graph, 
 #  have a matrix of pointers in the shape of the maze to the nodes corresponding to the tree
-# color the maze with corresponding colors to the maze
-#  
+# color the maze with corresponding colors to the tree
+# generate the tree using the maze, with a different type of node for branching and non-branching locations in the maze.
+
 
 
 
