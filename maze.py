@@ -13,6 +13,13 @@ class Node:
     parent: Optional["Node"] = None
     children: List["Node"] = field(default_factory=list)
 
+@dataclass
+class Tile:
+    xpos: int
+    ypos: int
+    color: tuple[int, int, int]
+    tree_node: Node
+
 
 
 pygame.init()
@@ -33,6 +40,50 @@ GREEN = (0, 255, 0)  # Down move
 YELLOW = (255, 255, 0)  # Left move
 PURPLE = (128, 0, 128)  # Right move
 
+COLORS = {
+    (255, 0, 0),      # Red
+    (0, 255, 0),      # Green
+    (0, 0, 255),      # Blue
+    (255, 255, 0),    # Yellow
+    (255, 165, 0),    # Orange
+    (128, 0, 128),    # Purple
+    (0, 255, 255),    # Cyan
+    (255, 0, 255),    # Magenta
+    (173, 255, 47),   # Green Yellow
+    (255, 105, 180),  # Hot Pink
+    (75, 0, 130),     # Indigo
+    (0, 128, 128),    # Teal
+    (255, 20, 147),   # Deep Pink
+    (138, 43, 226),   # Blue Violet
+    (34, 139, 34),    # Forest Green
+    (255, 140, 0),    # Dark Orange
+    (186, 85, 211),   # Medium Orchid
+    (70, 130, 180),   # Steel Blue
+    (240, 128, 128),  # Light Coral
+    (154, 205, 50),   # Yellow Green
+    (199, 21, 133),   # Medium Violet Red
+    (218, 112, 214),  # Orchid
+    (0, 206, 209),    # Dark Turquoise
+    (205, 92, 92),    # Indian Red
+    (30, 144, 255),   # Dodger Blue
+    (127, 255, 0),    # Chartreuse
+    (233, 150, 122),  # Dark Salmon
+    (139, 69, 19),    # Saddle Brown
+    (210, 105, 30),   # Chocolate
+    (255, 99, 71)     # Tomato
+}
+
+used_colors = set()
+
+def get_unique_color():
+    global COLORS
+    if not COLORS:
+        raise ValueError("No more unique colors available!")
+    color = COLORS.pop()  # Remove and return a random color
+    used_colors.add(color)
+    return color
+
+
 # Maze array (1s are walls, 0s are paths)
 maze = [
     [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -44,7 +95,7 @@ maze = [
     [1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1],
     [1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
     [1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1],
@@ -57,6 +108,38 @@ maze = [
 #  have a matrix of pointers in the shape of the maze to the nodes corresponding to the tree
 # color the maze with corresponding colors to the tree
 # generate the tree using the maze, with a different type of node for branching and non-branching locations in the maze.
+
+
+# count number of neighbors for each location in the maze
+neighbor_count = [[0 for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
+for i in range(GRID_SIZE):
+    for j in range(GRID_SIZE):
+        if maze[i][j] == 0:
+            # we have a valid empty space we check its top neighbor
+            if i > 0 and maze[i-1][ j] == 0:
+                neighbor_count[i][ j] += 1
+            # now left neighbor
+            if j > 0 and maze[i][ j-1] == 0:
+                neighbor_count[i][ j] +=1
+            # now below neighbor
+            if i < GRID_SIZE - 1 and maze[i+1][ j] == 0:
+                neighbor_count[i][ j] += 1
+            #now right neighbor
+            if j < GRID_SIZE -1 and maze[i][ j+1] == 0:
+                neighbor_count[i][ j] +=1
+
+
+#printing neighbor_count out
+
+for row in neighbor_count:
+    print(row)
+
+
+
+
+# starting preprocessing by making the first node
+
+
 
 
 
