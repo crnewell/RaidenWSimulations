@@ -18,7 +18,7 @@ class Tile:
     xpos: int
     ypos: int
     color: tuple[int, int, int]
-    tree_node: Node
+    # tree_node: Node
 
 
 
@@ -41,7 +41,6 @@ YELLOW = (255, 255, 0)  # Left move
 PURPLE = (128, 0, 128)  # Right move
 
 COLORS = {
-    (255, 0, 0),      # Red
     (0, 255, 0),      # Green
     (0, 0, 255),      # Blue
     (255, 255, 0),    # Yellow
@@ -103,6 +102,8 @@ maze = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1]
 ]
 
+tile_map ={} #is a dictionary that goes from a location to a tile, with it's color and corresponding tree node
+
 # initiate preprocessing:
 # create the tree according to the graph, 
 #  have a matrix of pointers in the shape of the maze to the nodes corresponding to the tree
@@ -135,22 +136,63 @@ for row in neighbor_count:
     print(row)
 
 
-
-
-# starting preprocessing by making the first node
-
-
-
-
-
-
-
-
 #starting position
 player_pos = [0, 1]  
 root_pos = TREE_X_OFFSET
 root = Node(xpos=root_pos, ypos=TREE_NODE_RADIUS, dir_to=None, left_domain=WINDOW_HEIGHT + TREE_NODE_RADIUS, right_domain= WINDOW_WIDTH - TREE_NODE_RADIUS)
 current_node = root
+
+def add_tile(xpos:int, ypos:int, new_Color: bool, color = None):
+    global tile_map
+    # check that we have not already added the tile
+    if (xpos, ypos) in tile_map:
+        return
+    
+    # check that are working with an open square
+    if maze[xpos][ypos] != 0:
+        raise ValueError("called add tile on nonvalid square")
+    # we have a new tile, so we must add it
+    # we get a new color if the previous node told us to
+    if new_Color:
+        color = get_unique_color()
+    elif color == None:
+        raise ValueError("did not recieve a color, or permission to create a new color")
+
+    tile_map[(xpos, ypos)] = Tile(xpos, ypos, color)
+    print("added tile with color", color, "at location ", xpos, ", ", ypos)
+    
+    # now we check the neighbors and call each of them
+    # if this current cell has more than 2 neighbors, then it's children will all get new colors
+    new_color_child = (neighbor_count[xpos][ypos] > 2)
+
+    # we have a valid empty space we check its top neighbor
+    if xpos > 0 and maze[xpos-1][ypos] == 0:
+        add_tile(xpos-1, ypos, new_color_child, color)
+    # now left neighbor
+    if ypos > 0 and maze[xpos][ypos-1] == 0:
+        add_tile(xpos, ypos-1, new_color_child, color)
+    # now below neighbor
+    if xpos < GRID_SIZE - 1 and maze[xpos+1][ypos] == 0:
+        add_tile(xpos+1, ypos, new_color_child, color)
+    #now right neighbor
+    if ypos < GRID_SIZE -1 and maze[xpos][ypos+1] == 0:
+        add_tile(xpos, ypos+1, new_color_child, color)
+
+
+
+
+# starting preprocessing by making the first node
+# first empty tile is 0, 1
+add_tile(0, 1, True)
+
+
+
+
+
+
+
+
+
 
 
 
@@ -160,7 +202,7 @@ pygame.display.set_caption("15x15 Maze")
 def draw_maze():
     for row in range(GRID_SIZE):
         for col in range(GRID_SIZE):
-            color = BLACK if maze[row][col] == 1 else WHITE
+            color = BLACK if maze[row][col] == 1 else tile_map[(row, col)].color
             pygame.draw.rect(screen, color, (col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE))
 
 def draw_player():
