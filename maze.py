@@ -345,23 +345,23 @@ while running:
         new_pos = [player_pos[0] - 1, player_pos[1]]
         if maze[new_pos[0]][new_pos[1]] == 0:
             player_pos = new_pos
-            add_node(move_direction)
+            # add_node(move_direction)
     elif move_direction == "DOWN":
         new_pos = [player_pos[0] + 1, player_pos[1]]
         if maze[new_pos[0]][new_pos[1]] == 0:
-            add_node(move_direction)
+            # add_node(move_direction)
             player_pos = new_pos
     elif move_direction == "LEFT":
         new_pos = [player_pos[0], player_pos[1] - 1]
         if maze[new_pos[0]][new_pos[1]] == 0:
-            add_node(move_direction)
+            # add_node(move_direction)
             player_pos = new_pos
     elif move_direction == "RIGHT":
         new_pos = [player_pos[0], player_pos[1] + 1]
         if maze[new_pos[0]][new_pos[1]] == 0:
-            add_node(move_direction)
+            # add_node(move_direction)
             player_pos = new_pos
-
+    print("player at tile: ", player_pos[0], player_pos[1], "tile color of ", tile_map[(player_pos[0], player_pos[1])].color, " and tree color of ", tile_map[(player_pos[0], player_pos[1])].color)
     # Drawing maze
     screen.fill(WHITE)
     draw_maze()
