@@ -7,11 +7,13 @@ from typing import List, Optional
 class Node:
     xpos: int
     ypos: int
-    # left_domain: int
-    # right_domain: int
     # dir_to: Optional[str]  # Direction moved to reach this node
     # parent: Optional["Node"] = None
     color: tuple[int, int, int]
+    disp_xpos: int
+    disp_ypos: int
+    left_domain: int
+    right_domain:int
     children: List["Node"] = field(default_factory=list)
 
 @dataclass
@@ -32,6 +34,7 @@ GRID_SIZE = 15     # Number of rows and columns in the maze
 CELL_SIZE = WINDOW_HEIGHT // GRID_SIZE  # Size of each cell
 TREE_X_OFFSET = (WINDOW_HEIGHT+WINDOW_WIDTH)//2  # Offset for tree visualization
 TREE_NODE_RADIUS = 10;
+TREE_NODE_OFFSET = 10; # this is a multiplier to space the tree out vertically.
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -195,7 +198,7 @@ def add_node(xpos:int, ypos:int, new_Node: bool, parent = None):
     
     # if we were told to make a new node at this location, we must add it, otherwise we use the parent node
     if new_Node:
-        new_node = Node(xpos, ypos, tile_map[(xpos, ypos)].color)
+        new_node = Node(xpos, ypos, tile_map[(xpos, ypos)].color, 0, 0, 0, 0)
         # add the child to the parent node (if it exists)
         if parent != None:
             parent.children.append(new_node)
@@ -225,6 +228,45 @@ def add_node(xpos:int, ypos:int, new_Node: bool, parent = None):
 
 #now start preprocessing the first location for the tree
 add_node(0,1, True)
+
+#now determine the display positions of the nodes in the tree
+def update_pos(node, disp_x, disp_y, new_domain_left, new_domain_right):
+    # update the current node with the correct values
+    node.disp_xpos = disp_x
+    node.disp_ypos = disp_y
+    node.left_domain = new_domain_left
+    node.right_domain = new_domain_right
+
+    #update the children with the correct values (each node has 0 or 2 children)
+    left = True
+    for child in node.children:
+        if left:
+            # we are populating a left child
+            update_pos(child, (disp_x + new_domain_left)//2, disp_y + TREE_NODE_RADIUS * TREE_NODE_OFFSET, new_domain_left, disp_x)
+        else:
+            #we are populating a right child
+            update_pos(child, (disp_x +new_domain_right)//2, disp_y + TREE_NODE_RADIUS *TREE_NODE_OFFSET, disp_x, new_domain_right)
+        left = False
+
+
+# setting all of the locations of the tree
+update_pos(node_map[(0,1)], TREE_X_OFFSET, TREE_NODE_RADIUS, WINDOW_HEIGHT + TREE_NODE_RADIUS, WINDOW_WIDTH - TREE_NODE_RADIUS)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # printing the tree post order (node, left, right)
 def print_node(root):
     print("Node with color " , root.color, " has " , len(root.children), " many children")
@@ -293,27 +335,18 @@ def draw_player():
 #         current_node = new_node
 
 
+def draw_subtree(subtreeroot):
+    # TODO: change color to show current node highlighted
+    pygame.draw.circle(screen, subtreeroot.color, (subtreeroot.disp_xpos, subtreeroot.disp_ypos), TREE_NODE_RADIUS)
+
+    
+    # pygame.draw.circle(screen, color, (subtreeroot.xpos,subtreeroot.ypos), TREE_NODE_RADIUS)
+    for node in  subtreeroot.children:
+        draw_subtree(node)
 
 
-# def draw_subtree(subtreeroot):
-#     # TODO: change color to show current node highlighted
-#     if subtreeroot.dir_to == "UP":
-#         color = BLUE
-#     elif subtreeroot.dir_to == "DOWN":
-#         color = GREEN
-#     elif subtreeroot.dir_to == "LEFT":
-#         color = YELLOW
-#     elif subtreeroot.dir_to == "RIGHT":
-#         color = PURPLE
-#     else:
-#         color = BLACK
-#     pygame.draw.circle(screen, color, (subtreeroot.xpos,subtreeroot.ypos), TREE_NODE_RADIUS)
-#     for node in  subtreeroot.children:
-#         draw_subtree(node)
-
-
-# def draw_tree():
-#     draw_subtree(root)
+def draw_tree():
+    draw_subtree(node_map[(0, 1)])
 
 
 
@@ -366,7 +399,7 @@ while running:
     screen.fill(WHITE)
     draw_maze()
     draw_player()
-    # draw_tree();
+    draw_tree()
 
     # Update the display
     pygame.display.flip()
