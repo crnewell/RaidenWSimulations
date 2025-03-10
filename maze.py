@@ -7,10 +7,11 @@ from typing import List, Optional
 class Node:
     xpos: int
     ypos: int
-    left_domain: int
-    right_domain: int
-    dir_to: Optional[str]  # Direction moved to reach this node
-    parent: Optional["Node"] = None
+    # left_domain: int
+    # right_domain: int
+    # dir_to: Optional[str]  # Direction moved to reach this node
+    # parent: Optional["Node"] = None
+    color: tuple[int, int, int]
     children: List["Node"] = field(default_factory=list)
 
 @dataclass
@@ -103,6 +104,7 @@ maze = [
 ]
 
 tile_map ={} #is a dictionary that goes from a location to a tile, with it's color and corresponding tree node
+node_map = {} #is a dictionary that goes from a location to a node
 
 # initiate preprocessing:
 # create the tree according to the graph, 
@@ -138,9 +140,9 @@ for row in neighbor_count:
 
 #starting position
 player_pos = [0, 1]  
-root_pos = TREE_X_OFFSET
-root = Node(xpos=root_pos, ypos=TREE_NODE_RADIUS, dir_to=None, left_domain=WINDOW_HEIGHT + TREE_NODE_RADIUS, right_domain= WINDOW_WIDTH - TREE_NODE_RADIUS)
-current_node = root
+# root_pos = TREE_X_OFFSET
+# root = Node(xpos=root_pos, ypos=TREE_NODE_RADIUS, dir_to=None, left_domain=WINDOW_HEIGHT + TREE_NODE_RADIUS, right_domain= WINDOW_WIDTH - TREE_NODE_RADIUS)
+# current_node = root
 
 def add_tile(xpos:int, ypos:int, new_Color: bool, color = None):
     global tile_map
@@ -159,7 +161,7 @@ def add_tile(xpos:int, ypos:int, new_Color: bool, color = None):
         raise ValueError("did not recieve a color, or permission to create a new color")
 
     tile_map[(xpos, ypos)] = Tile(xpos, ypos, color)
-    print("added tile with color", color, "at location ", xpos, ", ", ypos)
+    # print("added tile with color", color, "at location ", xpos, ", ", ypos)
     
     # now we check the neighbors and call each of them
     # if this current cell has more than 2 neighbors, then it's children will all get new colors
@@ -178,12 +180,63 @@ def add_tile(xpos:int, ypos:int, new_Color: bool, color = None):
     if ypos < GRID_SIZE -1 and maze[xpos][ypos+1] == 0:
         add_tile(xpos, ypos+1, new_color_child, color)
 
-
-
-
-# starting preprocessing by making the first node
+# starting preprocessing by making the first tile
 # first empty tile is 0, 1
 add_tile(0, 1, True)
+
+def add_node(xpos:int, ypos:int, new_Node: bool, parent = None):
+    global node_map
+    #check that we haven't added this location yet
+    if (xpos, ypos) in node_map:
+        return
+    #check that we are working with an open square
+    if maze[xpos][ypos] != 0:
+        raise ValueError("called add_node() on an nonvalid sqaure")
+    
+    # if we were told to make a new node at this location, we must add it, otherwise we use the parent node
+    if new_Node:
+        new_node = Node(xpos, ypos, tile_map[(xpos, ypos)].color)
+        # add the child to the parent node (if it exists)
+        if parent != None:
+            parent.children.append(new_node)
+        parent = new_node
+    elif parent == None:
+        raise ValueError("do not have a parent or permission to create a parent wihtin add_node")
+    # add the correct node to the dictionary
+    node_map[(xpos, ypos)] = parent
+    print("added node with color", tile_map[(xpos, ypos)].color, "at location ", xpos, ", ", ypos)
+
+    #if the current cell has more than 2 neighbors, then it's children will get new nodes in the tree
+    new_node_child = neighbor_count[xpos][ypos] > 2
+
+    #now we explore each of the children
+
+    if xpos > 0 and maze[xpos-1][ypos] == 0:
+        add_node(xpos-1, ypos, new_node_child, parent)
+    # now left neighbor
+    if ypos > 0 and maze[xpos][ypos-1] == 0:
+        add_node(xpos, ypos-1, new_node_child, parent)
+    # now below neighbor
+    if xpos < GRID_SIZE - 1 and maze[xpos+1][ypos] == 0:
+        add_node(xpos+1, ypos, new_node_child, parent)
+    #now right neighbor
+    if ypos < GRID_SIZE -1 and maze[xpos][ypos+1] == 0:
+        add_node(xpos, ypos+1, new_node_child, parent)
+
+#now start preprocessing the first location for the tree
+add_node(0,1, True)
+# printing the tree post order (node, left, right)
+def print_node(root):
+    print("Node with color " , root.color, " has " , len(root.children), " many children")
+    for child in root.children:
+        print_node(child)
+
+print_node(node_map[(0, 1)])
+
+
+
+
+
 
 
 
@@ -211,56 +264,56 @@ def draw_player():
     )
 
 
-def add_node(new_direction):
-    global current_node
-    # check that a node does need to be added
-    if (new_direction == "RIGHT" and current_node.dir_to == "LEFT") or (new_direction == "LEFT" and current_node.dir_to == "RIGHT") or (new_direction == "DOWN" and current_node.dir_to == "UP") or (new_direction == "UP" and current_node.dir_to == "DOWN"):
-        current_node = current_node.parent
-    else:
-        # TODO: change the domain so that if a node has one child then it has full domain
-        # adding a child on the left
-        if len(current_node.children)== 0:
-            new_node = Node(
-                xpos=(current_node.left_domain + current_node.xpos) // 2,
-                ypos=current_node.ypos + TREE_NODE_RADIUS * 3, 
-                dir_to= new_direction,
-                left_domain= current_node.left_domain,
-                right_domain=current_node.xpos,
-                parent= current_node)
-        #adding a child on the right
-        else:
-            new_node = Node(
-                xpos=(current_node.right_domain + current_node.xpos) // 2,
-                ypos=current_node.ypos + TREE_NODE_RADIUS * 3, 
-                dir_to= new_direction,
-                left_domain= current_node.xpos,
-                right_domain=current_node.right_domain,
-                parent= current_node)
-        current_node.children.append(new_node)
-        current_node = new_node
+# def add_node(new_direction):
+#     global current_node
+#     # check that a node does need to be added
+#     if (new_direction == "RIGHT" and current_node.dir_to == "LEFT") or (new_direction == "LEFT" and current_node.dir_to == "RIGHT") or (new_direction == "DOWN" and current_node.dir_to == "UP") or (new_direction == "UP" and current_node.dir_to == "DOWN"):
+#         current_node = current_node.parent
+#     else:
+#         # TODO: change the domain so that if a node has one child then it has full domain
+#         # adding a child on the left
+#         if len(current_node.children)== 0:
+#             new_node = Node(
+#                 xpos=(current_node.left_domain + current_node.xpos) // 2,
+#                 ypos=current_node.ypos + TREE_NODE_RADIUS * 3, 
+#                 dir_to= new_direction,
+#                 left_domain= current_node.left_domain,
+#                 right_domain=current_node.xpos,
+#                 parent= current_node)
+#         #adding a child on the right
+#         else:
+#             new_node = Node(
+#                 xpos=(current_node.right_domain + current_node.xpos) // 2,
+#                 ypos=current_node.ypos + TREE_NODE_RADIUS * 3, 
+#                 dir_to= new_direction,
+#                 left_domain= current_node.xpos,
+#                 right_domain=current_node.right_domain,
+#                 parent= current_node)
+#         current_node.children.append(new_node)
+#         current_node = new_node
 
 
 
 
-def draw_subtree(subtreeroot):
-    # TODO: change color to show current node highlighted
-    if subtreeroot.dir_to == "UP":
-        color = BLUE
-    elif subtreeroot.dir_to == "DOWN":
-        color = GREEN
-    elif subtreeroot.dir_to == "LEFT":
-        color = YELLOW
-    elif subtreeroot.dir_to == "RIGHT":
-        color = PURPLE
-    else:
-        color = BLACK
-    pygame.draw.circle(screen, color, (subtreeroot.xpos,subtreeroot.ypos), TREE_NODE_RADIUS)
-    for node in  subtreeroot.children:
-        draw_subtree(node)
+# def draw_subtree(subtreeroot):
+#     # TODO: change color to show current node highlighted
+#     if subtreeroot.dir_to == "UP":
+#         color = BLUE
+#     elif subtreeroot.dir_to == "DOWN":
+#         color = GREEN
+#     elif subtreeroot.dir_to == "LEFT":
+#         color = YELLOW
+#     elif subtreeroot.dir_to == "RIGHT":
+#         color = PURPLE
+#     else:
+#         color = BLACK
+#     pygame.draw.circle(screen, color, (subtreeroot.xpos,subtreeroot.ypos), TREE_NODE_RADIUS)
+#     for node in  subtreeroot.children:
+#         draw_subtree(node)
 
 
-def draw_tree():
-    draw_subtree(root)
+# def draw_tree():
+#     draw_subtree(root)
 
 
 
@@ -313,7 +366,7 @@ while running:
     screen.fill(WHITE)
     draw_maze()
     draw_player()
-    draw_tree();
+    # draw_tree();
 
     # Update the display
     pygame.display.flip()
