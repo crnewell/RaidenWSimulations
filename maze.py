@@ -33,8 +33,9 @@ WINDOW_HEIGHT = 600
 GRID_SIZE = 15     # Number of rows and columns in the maze
 CELL_SIZE = WINDOW_HEIGHT // GRID_SIZE  # Size of each cell
 TREE_X_OFFSET = (WINDOW_HEIGHT+WINDOW_WIDTH)//2  # Offset for tree visualization
-TREE_NODE_RADIUS = 10;
-TREE_NODE_OFFSET = 10; # this is a multiplier to space the tree out vertically.
+TREE_NODE_RADIUS = 10
+TREE_NODE_OFFSET = 6; # this is a multiplier to space the tree out vertically.
+TREE_CURSOR_MULTIPLIER = 2      # this is a multiplier to get the size of the red square in the tree
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -103,8 +104,36 @@ maze = [
     [1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1],
     [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1]
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ]
+
+# maze = [
+#     [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+#     [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+#     [1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+#     [1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1],
+#     [1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1],
+#     [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1],
+#     [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+#     [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1],
+#     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1],
+#     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1],
+#     [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+#     [1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+#     [1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1],
+#     [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+#     [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+#     [1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
+#     [1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+#     [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+#     [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+#     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1],
+#     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1],
+#     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1],
+#     [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1],
+#     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+#     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+# ]
 
 tile_map ={} #is a dictionary that goes from a location to a tile, with it's color and corresponding tree node
 node_map = {} #is a dictionary that goes from a location to a node
@@ -250,30 +279,16 @@ def update_pos(node, disp_x, disp_y, new_domain_left, new_domain_right):
 
 
 # setting all of the locations of the tree
-update_pos(node_map[(0,1)], TREE_X_OFFSET, TREE_NODE_RADIUS, WINDOW_HEIGHT + TREE_NODE_RADIUS, WINDOW_WIDTH - TREE_NODE_RADIUS)
+update_pos(node_map[(0,1)], TREE_X_OFFSET, TREE_NODE_RADIUS * TREE_CURSOR_MULTIPLIER, WINDOW_HEIGHT + TREE_NODE_RADIUS, WINDOW_WIDTH - TREE_NODE_RADIUS)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# printing the tree post order (node, left, right)
+# printing the tree post order (node, left, right) DEBUGGING
 def print_node(root):
     print("Node with color " , root.color, " has " , len(root.children), " many children")
     for child in root.children:
         print_node(child)
 
-print_node(node_map[(0, 1)])
+# print_node(node_map[(0, 1)])
 
 
 
@@ -290,7 +305,7 @@ print_node(node_map[(0, 1)])
 
 
 
-
+# START DISPAY
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("15x15 Maze")
 
@@ -306,35 +321,6 @@ def draw_player():
     )
 
 
-# def add_node(new_direction):
-#     global current_node
-#     # check that a node does need to be added
-#     if (new_direction == "RIGHT" and current_node.dir_to == "LEFT") or (new_direction == "LEFT" and current_node.dir_to == "RIGHT") or (new_direction == "DOWN" and current_node.dir_to == "UP") or (new_direction == "UP" and current_node.dir_to == "DOWN"):
-#         current_node = current_node.parent
-#     else:
-#         # TODO: change the domain so that if a node has one child then it has full domain
-#         # adding a child on the left
-#         if len(current_node.children)== 0:
-#             new_node = Node(
-#                 xpos=(current_node.left_domain + current_node.xpos) // 2,
-#                 ypos=current_node.ypos + TREE_NODE_RADIUS * 3, 
-#                 dir_to= new_direction,
-#                 left_domain= current_node.left_domain,
-#                 right_domain=current_node.xpos,
-#                 parent= current_node)
-#         #adding a child on the right
-#         else:
-#             new_node = Node(
-#                 xpos=(current_node.right_domain + current_node.xpos) // 2,
-#                 ypos=current_node.ypos + TREE_NODE_RADIUS * 3, 
-#                 dir_to= new_direction,
-#                 left_domain= current_node.xpos,
-#                 right_domain=current_node.right_domain,
-#                 parent= current_node)
-#         current_node.children.append(new_node)
-#         current_node = new_node
-
-
 def draw_subtree(subtreeroot):
     # TODO: change color to show current node highlighted
     pygame.draw.circle(screen, subtreeroot.color, (subtreeroot.disp_xpos, subtreeroot.disp_ypos), TREE_NODE_RADIUS)
@@ -346,7 +332,12 @@ def draw_subtree(subtreeroot):
 
 
 def draw_tree():
+    # draw a square for the current node
+    tree_loc_x = node_map[(player_pos[0], player_pos[1])].disp_xpos
+    tree_loc_y = node_map[(player_pos[0], player_pos[1])].disp_ypos
+    pygame.draw.rect(screen, RED, (tree_loc_x - TREE_NODE_RADIUS * TREE_CURSOR_MULTIPLIER, tree_loc_y - TREE_NODE_RADIUS *TREE_CURSOR_MULTIPLIER, TREE_NODE_RADIUS *2 * TREE_CURSOR_MULTIPLIER, TREE_NODE_RADIUS *2 * TREE_CURSOR_MULTIPLIER))
     draw_subtree(node_map[(0, 1)])
+    
 
 
 
