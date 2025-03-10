@@ -4,6 +4,7 @@ import sys
 import pygame
 import numpy as np
 from PyQt5.QtGui import QImage, QPainter
+import probability
 
 
 class PygameWidget(QWidget):
