@@ -505,6 +505,7 @@ button_hover_reset = False
 button_hover_pause = False
 solution_paused = False
 button_hover_step = False
+solution_step = False
 
 while running:
     mouse_pos = pygame.mouse.get_pos()
@@ -541,6 +542,7 @@ while running:
                 path_cells.clear()
                 in_exploration_phase = True
                 current_algorithm = "BFS"
+                move_direction = None
                 print("BFS Solution path:", solution_path)
                 print(f"BFS exploration: {len(exploration_history)} steps")
             elif button_hover_dfs:
@@ -555,6 +557,7 @@ while running:
                 path_cells.clear()
                 in_exploration_phase = True
                 current_algorithm = "DFS"
+                move_direction = None
                 print("DFS Solution path:", solution_path)
                 print(f"DFS exploration: {len(exploration_history)} steps")
             elif button_hover_reset:
@@ -576,6 +579,11 @@ while running:
             elif button_hover_step:
                 print("SOLUTION STEP PRESSED")
                 #TODO: step the solution by one.
+                if solution_paused:
+                    solution_step = True
+                    solution_paused = False
+                
+
 
 
 
@@ -608,6 +616,10 @@ while running:
             
             if current_step >= len(solution_path):
                 solving_active = False
+        if solution_step:
+            # return the solve to paused
+            solution_step = False
+            solution_paused = True
     
     # Handle player movement
     if move_direction == "UP":
