@@ -42,11 +42,16 @@ BUTTON_X_BFS = WINDOW_WIDTH - BUTTON_WIDTH - 20
 BUTTON_Y_BFS = WINDOW_HEIGHT - BUTTON_HEIGHT - 20
 BUTTON_X_DFS = WINDOW_WIDTH - BUTTON_WIDTH - 20
 BUTTON_Y_DFS = WINDOW_HEIGHT - BUTTON_HEIGHT - 80  # Position above BFS button
+BUTTON_X_RESET = WINDOW_WIDTH - 2*BUTTON_WIDTH - 40 #position next to the bfs button
+BUTTON_Y_RESET = WINDOW_HEIGHT - BUTTON_HEIGHT - 20
+
 BUTTON_COLOR = (100, 100, 200)
 BUTTON_HOVER_COLOR = (120, 120, 220)
 BUTTON_TEXT_COLOR = (255, 255, 255)
 BUTTON_TEXT_BFS = "Solve BFS"
 BUTTON_TEXT_DFS = "Solve DFS"
+BUTTON_TEXT_RESET = "Reset Maze"
+
 
 WHITE = (255, 255, 255)
 GREY = (128, 128, 128)
@@ -490,11 +495,13 @@ clock = pygame.time.Clock()
 move_direction = None
 button_hover_bfs = False
 button_hover_dfs = False
+button_hover_reset = False
 
 while running:
     mouse_pos = pygame.mouse.get_pos()
     button_hover_bfs = is_button_hovered(mouse_pos, BUTTON_X_BFS, BUTTON_Y_BFS)
     button_hover_dfs = is_button_hovered(mouse_pos, BUTTON_X_DFS, BUTTON_Y_DFS)
+    button_hover_reset = is_button_hovered(mouse_pos, BUTTON_X_RESET, BUTTON_Y_RESET)
     
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -539,6 +546,9 @@ while running:
                 current_algorithm = "DFS"
                 print("DFS Solution path:", solution_path)
                 print(f"DFS exploration: {len(exploration_history)} steps")
+            elif button_hover_reset:
+                #TODO: setup the reset
+                print("MAZE RESET PRESSED")
     
     # Handle exploration visualization
     if solving_active:
@@ -596,6 +606,7 @@ while running:
     # draw_button(WINDOW_WIDTH-200, WINDOW_HEIGHT-100, "SOLVE BFS", button_hover_bfs )
     draw_button(BUTTON_X_BFS, BUTTON_Y_BFS, BUTTON_TEXT_BFS, button_hover_bfs)
     draw_button(BUTTON_X_DFS, BUTTON_Y_DFS, BUTTON_TEXT_DFS, button_hover_dfs)
+    draw_button(BUTTON_X_RESET, BUTTON_Y_RESET, BUTTON_TEXT_RESET, button_hover_reset)
     # draw_button(button_hover_dfs)
 
     # Update the display
