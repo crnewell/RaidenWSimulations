@@ -44,6 +44,8 @@ BUTTON_X_DFS = WINDOW_WIDTH - BUTTON_WIDTH - 20
 BUTTON_Y_DFS = WINDOW_HEIGHT - BUTTON_HEIGHT - 80  # Position above BFS button
 BUTTON_X_RESET = WINDOW_WIDTH - 2*BUTTON_WIDTH - 40 #position next to the bfs button
 BUTTON_Y_RESET = WINDOW_HEIGHT - BUTTON_HEIGHT - 20
+BUTTON_X_PAUSE = WINDOW_WIDTH - 3*BUTTON_WIDTH - 60 #position next to the reset button
+BUTTON_Y_PAUSE = WINDOW_HEIGHT - BUTTON_HEIGHT - 20
 
 BUTTON_COLOR = (100, 100, 200)
 BUTTON_HOVER_COLOR = (120, 120, 220)
@@ -51,6 +53,7 @@ BUTTON_TEXT_COLOR = (255, 255, 255)
 BUTTON_TEXT_BFS = "Solve BFS"
 BUTTON_TEXT_DFS = "Solve DFS"
 BUTTON_TEXT_RESET = "Reset Maze"
+BUTTON_TEXT_PAUSE = "Pause/Play Solve"
 
 
 WHITE = (255, 255, 255)
@@ -496,12 +499,14 @@ move_direction = None
 button_hover_bfs = False
 button_hover_dfs = False
 button_hover_reset = False
+button_hover_pause = False
 
 while running:
     mouse_pos = pygame.mouse.get_pos()
     button_hover_bfs = is_button_hovered(mouse_pos, BUTTON_X_BFS, BUTTON_Y_BFS)
     button_hover_dfs = is_button_hovered(mouse_pos, BUTTON_X_DFS, BUTTON_Y_DFS)
     button_hover_reset = is_button_hovered(mouse_pos, BUTTON_X_RESET, BUTTON_Y_RESET)
+    button_hover_pause = is_button_hovered(mouse_pos, BUTTON_X_PAUSE, BUTTON_Y_PAUSE)
     
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -547,7 +552,6 @@ while running:
                 print("DFS Solution path:", solution_path)
                 print(f"DFS exploration: {len(exploration_history)} steps")
             elif button_hover_reset:
-                #TODO: setup the reset
                 print("MAZE RESET PRESSED")
                 # Reset 
                 player_pos = original_player_pos.copy()
@@ -559,6 +563,11 @@ while running:
                 path_cells.clear()
                 # in_exploration_phase = False
                 move_direction = None
+            elif button_hover_pause:
+                # TODO: pause the exploration
+                print("SOLUTION PAUSE PRESSED")
+
+
 
     
     # Handle exploration visualization
@@ -618,6 +627,7 @@ while running:
     draw_button(BUTTON_X_BFS, BUTTON_Y_BFS, BUTTON_TEXT_BFS, button_hover_bfs)
     draw_button(BUTTON_X_DFS, BUTTON_Y_DFS, BUTTON_TEXT_DFS, button_hover_dfs)
     draw_button(BUTTON_X_RESET, BUTTON_Y_RESET, BUTTON_TEXT_RESET, button_hover_reset)
+    draw_button(BUTTON_X_PAUSE, BUTTON_Y_PAUSE, BUTTON_TEXT_PAUSE, button_hover_pause)
     # draw_button(button_hover_dfs)
 
     # Update the display
