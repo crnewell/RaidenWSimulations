@@ -18,12 +18,19 @@ BUTTON_X_reset = WINDOW_WIDTH - BUTTON_WIDTH - 20
 BUTTON_Y_reset = WINDOW_HEIGHT - BUTTON_HEIGHT - 20
 BUTTON_X_selection = WINDOW_WIDTH - 2*BUTTON_WIDTH - 40
 BUTTON_Y_selection = WINDOW_HEIGHT - BUTTON_HEIGHT - 20
+BUTTON_X_insertion = WINDOW_WIDTH - 3*BUTTON_WIDTH - 60
+BUTTON_Y_insertion = WINDOW_HEIGHT - BUTTON_HEIGHT - 20
+BUTTON_X_bubble = WINDOW_WIDTH - 4*BUTTON_WIDTH - 80
+BUTTON_Y_bubble = WINDOW_HEIGHT - BUTTON_HEIGHT - 20
+
 
 BUTTON_COLOR = (100, 100, 200)
 BUTTON_HOVER_COLOR = (120, 120, 220)
 BUTTON_TEXT_COLOR = (255, 255, 255)
 BUTTON_TEXT_reset = "Reset/Shuffle"
 BUTTON_TEXT_selection = "Selection Sort"
+BUTTON_TEXT_insertion = "Insertion Sort"
+BUTTON_TEXT_bubble = "Bubble Sort"
 
 
 
@@ -57,11 +64,10 @@ def draw_cards(highlight_index=None, swap_index=None):
     pygame.display.update()
 
 def draw_buttons():
-    buttons = [("Selection Sort", 50), ("Bubble Sort", 300), ("Insertion Sort", 550), ("Shuffle", 750)]
-    for text, x in buttons:
-        pygame.draw.rect(screen, GRAY, (x, 400, 200, 50))
-        label = font.render(text, True, BLACK)
-        screen.blit(label, (x + 10, 410))
+    draw_button(BUTTON_X_reset, BUTTON_Y_reset, BUTTON_TEXT_reset, button_hover_reset)
+    draw_button(BUTTON_X_selection, BUTTON_Y_selection, BUTTON_TEXT_selection, button_hover_selection)
+    draw_button(BUTTON_X_insertion, BUTTON_Y_insertion, BUTTON_TEXT_insertion, button_hover_insertion)
+    draw_button(BUTTON_X_bubble, BUTTON_Y_bubble, BUTTON_TEXT_bubble, button_hover_bubble)
 
 def selection_sort_visual():
     for i in range(len(values)):
@@ -129,6 +135,8 @@ while running:
 
     button_hover_reset = is_button_hovered(mouse_pos, BUTTON_X_reset, BUTTON_Y_reset)
     button_hover_selection = is_button_hovered(mouse_pos, BUTTON_X_selection, BUTTON_Y_selection)
+    button_hover_insertion = is_button_hovered(mouse_pos, BUTTON_X_insertion, BUTTON_Y_insertion)
+    button_hover_bubble = is_button_hovered(mouse_pos, BUTTON_X_bubble, BUTTON_Y_bubble)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -138,11 +146,14 @@ while running:
                 shuffle_values()
                 draw_cards()
             elif button_hover_selection:
-                selection_sort_visual()
+                selection_sort_visual()            
+            elif button_hover_insertion:
+                insertion_sort_visual()
+            elif button_hover_bubble:
+                bubble_sort_visual()
     screen.fill(WHITE)
     draw_cards()
-    draw_button(BUTTON_X_reset, BUTTON_Y_reset, BUTTON_TEXT_reset, button_hover_reset)
-    draw_button(BUTTON_X_selection, BUTTON_Y_selection, BUTTON_TEXT_selection, button_hover_selection)
+    draw_buttons()
 
 
     # Update the display
