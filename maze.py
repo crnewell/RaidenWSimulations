@@ -46,6 +46,8 @@ BUTTON_X_RESET = WINDOW_WIDTH - 2*BUTTON_WIDTH - 40 #position next to the bfs bu
 BUTTON_Y_RESET = WINDOW_HEIGHT - BUTTON_HEIGHT - 20
 BUTTON_X_PAUSE = WINDOW_WIDTH - 3*BUTTON_WIDTH - 60 #position next to the reset button
 BUTTON_Y_PAUSE = WINDOW_HEIGHT - BUTTON_HEIGHT - 20
+BUTTON_X_STEP = WINDOW_WIDTH - 2*BUTTON_WIDTH -40
+BUTTON_Y_STEP = WINDOW_HEIGHT - BUTTON_HEIGHT - 80
 
 BUTTON_COLOR = (100, 100, 200)
 BUTTON_HOVER_COLOR = (120, 120, 220)
@@ -54,6 +56,7 @@ BUTTON_TEXT_BFS = "Solve BFS"
 BUTTON_TEXT_DFS = "Solve DFS"
 BUTTON_TEXT_RESET = "Reset Maze"
 BUTTON_TEXT_PAUSE = "Pause/Play Solve"
+BUTTON_TEXT_STEP = "Step Solve"
 
 
 WHITE = (255, 255, 255)
@@ -501,6 +504,7 @@ button_hover_dfs = False
 button_hover_reset = False
 button_hover_pause = False
 solution_paused = False
+button_hover_step = False
 
 while running:
     mouse_pos = pygame.mouse.get_pos()
@@ -508,6 +512,7 @@ while running:
     button_hover_dfs = is_button_hovered(mouse_pos, BUTTON_X_DFS, BUTTON_Y_DFS)
     button_hover_reset = is_button_hovered(mouse_pos, BUTTON_X_RESET, BUTTON_Y_RESET)
     button_hover_pause = is_button_hovered(mouse_pos, BUTTON_X_PAUSE, BUTTON_Y_PAUSE)
+    button_hover_step = is_button_hovered(mouse_pos, BUTTON_X_STEP, BUTTON_Y_STEP)
     
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -565,9 +570,12 @@ while running:
                 move_direction = None
                 solution_paused = False
             elif button_hover_pause:
-                # TODO: pause the exploration
+                #pause the exploration
                 print("SOLUTION PAUSE PRESSED")
                 solution_paused = not solution_paused
+            elif button_hover_step:
+                print("SOLUTION STEP PRESSED")
+                #TODO: step the solution by one.
 
 
 
@@ -630,6 +638,8 @@ while running:
     draw_button(BUTTON_X_DFS, BUTTON_Y_DFS, BUTTON_TEXT_DFS, button_hover_dfs)
     draw_button(BUTTON_X_RESET, BUTTON_Y_RESET, BUTTON_TEXT_RESET, button_hover_reset)
     draw_button(BUTTON_X_PAUSE, BUTTON_Y_PAUSE, BUTTON_TEXT_PAUSE, button_hover_pause)
+    draw_button(BUTTON_X_STEP, BUTTON_Y_STEP, BUTTON_TEXT_STEP, button_hover_step)
+
     # draw_button(button_hover_dfs)
 
     # Update the display
