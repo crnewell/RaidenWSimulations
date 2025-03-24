@@ -500,6 +500,7 @@ button_hover_bfs = False
 button_hover_dfs = False
 button_hover_reset = False
 button_hover_pause = False
+solution_paused = False
 
 while running:
     mouse_pos = pygame.mouse.get_pos()
@@ -561,18 +562,19 @@ while running:
                 visited_cells.clear()
                 frontier_cells.clear()
                 path_cells.clear()
-                # in_exploration_phase = False
                 move_direction = None
+                solution_paused = False
             elif button_hover_pause:
                 # TODO: pause the exploration
                 print("SOLUTION PAUSE PRESSED")
+                solution_paused = not solution_paused
 
 
 
     
     # Handle exploration visualization
     if solving_active:
-        if in_exploration_phase and exploration_step < len(exploration_history):
+        if not solution_paused and in_exploration_phase and exploration_step < len(exploration_history):
             # Update visualization states
             visited_set, frontier_set, current_pos = exploration_history[exploration_step]
             visited_cells = visited_set
@@ -590,7 +592,7 @@ while running:
                 path_cells = final_path_set
                 pygame.time.delay(500)  # Pause before starting the solution path
         
-        elif not in_exploration_phase and current_step < len(solution_path):
+        elif not solution_paused and not in_exploration_phase and current_step < len(solution_path):
             # Now follow the solution path
             move_direction = solution_path[current_step]
             current_step += 1
