@@ -12,15 +12,18 @@ GAP = 20
 WHITE, BLACK, RED, GREEN, BLUE, GRAY = (255, 255, 255), (0, 0, 0), (255, 0, 0), (0, 255, 0), (0, 0, 255), (200, 200, 200)
 
 # Button constants
-BUTTON_WIDTH = 150
+BUTTON_WIDTH = 200
 BUTTON_HEIGHT = 50
 BUTTON_X_reset = WINDOW_WIDTH - BUTTON_WIDTH - 20
 BUTTON_Y_reset = WINDOW_HEIGHT - BUTTON_HEIGHT - 20
+BUTTON_X_selection = WINDOW_WIDTH - 2*BUTTON_WIDTH - 40
+BUTTON_Y_selection = WINDOW_HEIGHT - BUTTON_HEIGHT - 20
 
 BUTTON_COLOR = (100, 100, 200)
 BUTTON_HOVER_COLOR = (120, 120, 220)
 BUTTON_TEXT_COLOR = (255, 255, 255)
 BUTTON_TEXT_reset = "Reset/Shuffle"
+BUTTON_TEXT_selection = "Selection Sort"
 
 
 
@@ -125,24 +128,21 @@ while running:
     mouse_pos = pygame.mouse.get_pos()
 
     button_hover_reset = is_button_hovered(mouse_pos, BUTTON_X_reset, BUTTON_Y_reset)
+    button_hover_selection = is_button_hovered(mouse_pos, BUTTON_X_selection, BUTTON_Y_selection)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
-            x, y = event.pos
-            if 50 <= x <= 250 and 400 <= y <= 450:
-                selection_sort_visual()
-            elif 300 <= x <= 500 and 400 <= y <= 450:
-                bubble_sort_visual()
-            elif 550 <= x <= 750 and 400 <= y <= 450:
-                insertion_sort_visual()
-            elif 650 <= x <= 850 and 400 <= y <= 450:
+            if button_hover_reset:
                 shuffle_values()
                 draw_cards()
+            elif button_hover_selection:
+                selection_sort_visual()
     screen.fill(WHITE)
     draw_cards()
     draw_button(BUTTON_X_reset, BUTTON_Y_reset, BUTTON_TEXT_reset, button_hover_reset)
+    draw_button(BUTTON_X_selection, BUTTON_Y_selection, BUTTON_TEXT_selection, button_hover_selection)
 
 
     # Update the display
