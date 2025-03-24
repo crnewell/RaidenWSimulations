@@ -549,6 +549,17 @@ while running:
             elif button_hover_reset:
                 #TODO: setup the reset
                 print("MAZE RESET PRESSED")
+                # Reset 
+                player_pos = original_player_pos.copy()
+                solving_active = False
+                current_step = 0
+                exploration_step = 0
+                visited_cells.clear()
+                frontier_cells.clear()
+                path_cells.clear()
+                # in_exploration_phase = False
+                move_direction = None
+
     
     # Handle exploration visualization
     if solving_active:
