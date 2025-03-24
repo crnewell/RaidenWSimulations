@@ -576,9 +576,11 @@ while running:
                 #pause the exploration
                 print("SOLUTION PAUSE PRESSED")
                 solution_paused = not solution_paused
+                move_direction = None
             elif button_hover_step:
                 print("SOLUTION STEP PRESSED")
                 #TODO: step the solution by one.
+                move_direction = None
                 if solution_paused:
                     solution_step = True
                     solution_paused = False
