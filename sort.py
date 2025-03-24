@@ -14,14 +14,13 @@ WHITE, BLACK, RED, GREEN, BLUE, GRAY = (255, 255, 255), (0, 0, 0), (255, 0, 0), 
 # Button constants
 BUTTON_WIDTH = 150
 BUTTON_HEIGHT = 50
-BUTTON_X_BFS = WINDOW_WIDTH - BUTTON_WIDTH - 20
-BUTTON_Y_BFS = WINDOW_HEIGHT - BUTTON_HEIGHT - 20
-
+BUTTON_X_reset = WINDOW_WIDTH - BUTTON_WIDTH - 20
+BUTTON_Y_reset = WINDOW_HEIGHT - BUTTON_HEIGHT - 20
 
 BUTTON_COLOR = (100, 100, 200)
 BUTTON_HOVER_COLOR = (120, 120, 220)
 BUTTON_TEXT_COLOR = (255, 255, 255)
-BUTTON_TEXT_BFS = "Solve BFS"
+BUTTON_TEXT_reset = "Reset/Shuffle"
 
 
 
@@ -116,8 +115,17 @@ def is_button_hovered(pos, button_x, button_y):
 
 running = True
 clock = pygame.time.Clock()
+button_hover_selection = False
+button_hover_insertion = False
+button_hover_bubble = False
+button_hover_reset = False
+
 
 while running:
+    mouse_pos = pygame.mouse.get_pos()
+
+    button_hover_reset = is_button_hovered(mouse_pos, BUTTON_X_reset, BUTTON_Y_reset)
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -134,8 +142,15 @@ while running:
                 draw_cards()
     screen.fill(WHITE)
     draw_cards()
-    pygame.display.update()
+    draw_button(BUTTON_X_reset, BUTTON_Y_reset, BUTTON_TEXT_reset, button_hover_reset)
 
-    
+
+    # Update the display
+    pygame.display.flip()
+
+    # Limit frame rate
+    clock.tick(10)
+
+
 pygame.quit()
 
