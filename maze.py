@@ -42,11 +42,22 @@ BUTTON_X_BFS = WINDOW_WIDTH - BUTTON_WIDTH - 20
 BUTTON_Y_BFS = WINDOW_HEIGHT - BUTTON_HEIGHT - 20
 BUTTON_X_DFS = WINDOW_WIDTH - BUTTON_WIDTH - 20
 BUTTON_Y_DFS = WINDOW_HEIGHT - BUTTON_HEIGHT - 80  # Position above BFS button
+BUTTON_X_RESET = WINDOW_WIDTH - 2*BUTTON_WIDTH - 40 #position next to the bfs button
+BUTTON_Y_RESET = WINDOW_HEIGHT - BUTTON_HEIGHT - 20
+BUTTON_X_PAUSE = WINDOW_WIDTH - 3*BUTTON_WIDTH - 60 #position next to the reset button
+BUTTON_Y_PAUSE = WINDOW_HEIGHT - BUTTON_HEIGHT - 20
+BUTTON_X_STEP = WINDOW_WIDTH - 2*BUTTON_WIDTH -40
+BUTTON_Y_STEP = WINDOW_HEIGHT - BUTTON_HEIGHT - 80
+
 BUTTON_COLOR = (100, 100, 200)
 BUTTON_HOVER_COLOR = (120, 120, 220)
 BUTTON_TEXT_COLOR = (255, 255, 255)
 BUTTON_TEXT_BFS = "Solve BFS"
 BUTTON_TEXT_DFS = "Solve DFS"
+BUTTON_TEXT_RESET = "Reset Maze"
+BUTTON_TEXT_PAUSE = "Pause/Play Solve"
+BUTTON_TEXT_STEP = "Step Solve"
+
 
 WHITE = (255, 255, 255)
 GREY = (128, 128, 128)
@@ -490,11 +501,19 @@ clock = pygame.time.Clock()
 move_direction = None
 button_hover_bfs = False
 button_hover_dfs = False
+button_hover_reset = False
+button_hover_pause = False
+solution_paused = False
+button_hover_step = False
+solution_step = False
 
 while running:
     mouse_pos = pygame.mouse.get_pos()
     button_hover_bfs = is_button_hovered(mouse_pos, BUTTON_X_BFS, BUTTON_Y_BFS)
     button_hover_dfs = is_button_hovered(mouse_pos, BUTTON_X_DFS, BUTTON_Y_DFS)
+    button_hover_reset = is_button_hovered(mouse_pos, BUTTON_X_RESET, BUTTON_Y_RESET)
+    button_hover_pause = is_button_hovered(mouse_pos, BUTTON_X_PAUSE, BUTTON_Y_PAUSE)
+    button_hover_step = is_button_hovered(mouse_pos, BUTTON_X_STEP, BUTTON_Y_STEP)
     
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -523,6 +542,7 @@ while running:
                 path_cells.clear()
                 in_exploration_phase = True
                 current_algorithm = "BFS"
+                move_direction = None
                 print("BFS Solution path:", solution_path)
                 print(f"BFS exploration: {len(exploration_history)} steps")
             elif button_hover_dfs:
@@ -537,12 +557,42 @@ while running:
                 path_cells.clear()
                 in_exploration_phase = True
                 current_algorithm = "DFS"
+                move_direction = None
                 print("DFS Solution path:", solution_path)
                 print(f"DFS exploration: {len(exploration_history)} steps")
+            elif button_hover_reset:
+                print("MAZE RESET PRESSED")
+                # Reset 
+                player_pos = original_player_pos.copy()
+                solving_active = False
+                current_step = 0
+                exploration_step = 0
+                visited_cells.clear()
+                frontier_cells.clear()
+                path_cells.clear()
+                move_direction = None
+                solution_paused = False
+            elif button_hover_pause:
+                #pause the exploration
+                print("SOLUTION PAUSE PRESSED")
+                solution_paused = not solution_paused
+                move_direction = None
+            elif button_hover_step:
+                print("SOLUTION STEP PRESSED")
+                #TODO: step the solution by one.
+                move_direction = None
+                if solution_paused:
+                    solution_step = True
+                    solution_paused = False
+                
+
+
+
+
     
     # Handle exploration visualization
     if solving_active:
-        if in_exploration_phase and exploration_step < len(exploration_history):
+        if not solution_paused and in_exploration_phase and exploration_step < len(exploration_history):
             # Update visualization states
             visited_set, frontier_set, current_pos = exploration_history[exploration_step]
             visited_cells = visited_set
@@ -560,7 +610,7 @@ while running:
                 path_cells = final_path_set
                 pygame.time.delay(500)  # Pause before starting the solution path
         
-        elif not in_exploration_phase and current_step < len(solution_path):
+        elif not solution_paused and not in_exploration_phase and current_step < len(solution_path):
             # Now follow the solution path
             move_direction = solution_path[current_step]
             current_step += 1
@@ -568,6 +618,10 @@ while running:
             
             if current_step >= len(solution_path):
                 solving_active = False
+        if solution_step:
+            # return the solve to paused
+            solution_step = False
+            solution_paused = True
     
     # Handle player movement
     if move_direction == "UP":
@@ -596,6 +650,10 @@ while running:
     # draw_button(WINDOW_WIDTH-200, WINDOW_HEIGHT-100, "SOLVE BFS", button_hover_bfs )
     draw_button(BUTTON_X_BFS, BUTTON_Y_BFS, BUTTON_TEXT_BFS, button_hover_bfs)
     draw_button(BUTTON_X_DFS, BUTTON_Y_DFS, BUTTON_TEXT_DFS, button_hover_dfs)
+    draw_button(BUTTON_X_RESET, BUTTON_Y_RESET, BUTTON_TEXT_RESET, button_hover_reset)
+    draw_button(BUTTON_X_PAUSE, BUTTON_Y_PAUSE, BUTTON_TEXT_PAUSE, button_hover_pause)
+    draw_button(BUTTON_X_STEP, BUTTON_Y_STEP, BUTTON_TEXT_STEP, button_hover_step)
+
     # draw_button(button_hover_dfs)
 
     # Update the display
