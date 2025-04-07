@@ -129,7 +129,7 @@ button_hover_insertion = False
 button_hover_bubble = False
 button_hover_reset = False
 
-
+# need to refactor this so that the game loop runs multiple times within one sorting move.
 while running:
     mouse_pos = pygame.mouse.get_pos()
 
