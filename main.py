@@ -4,6 +4,8 @@ import sys
 import pygame
 import numpy as np
 from PyQt5.QtGui import QImage, QPainter
+from dataclasses import dataclass, field
+from typing import List, Optional
 
 
 class PygameWidget(QWidget):
@@ -166,23 +168,56 @@ class ClickableSimulation(PyGameQtWidget):
         self.bg_color = (30, 100, 30)
 
 class MazeRunner(PyGameQtWidget):
+    @dataclass
+    class Node:
+        xpos: int
+        ypos: int
+        color: tuple[int, int, int]
+        disp_xpos: int
+        disp_ypos: int
+        left_domain: int
+        right_domain:int
+        children: List["Node"] = field(default_factory=list)
+        is_start: bool = False
+        is_end: bool = False
+
     # Constants
     WINDOW_WIDTH = 1200  # Increased width to fit tree
     WINDOW_HEIGHT = 400
     GRID_SIZE = 15     # Number of rows and columns in the maze
-    CELL_SIZE = WINDOW_HEIGHT // GRID_SIZE  # Size of each cell
-    TREE_X_OFFSET = (WINDOW_HEIGHT+WINDOW_WIDTH)//2  # Offset for tree visualization
-    TREE_NODE_RADIUS = 10
-    TREE_NODE_OFFSET = 6  # this is a multiplier to space the tree out vertically.
-    TREE_CURSOR_MULTIPLIER = 2  # this is a multiplier to get the size of the red square in the tree
 
 
 
-    def __init__(self, parent=None, width=WINDOW_WIDTH, height=WINDOW_HEIGHT):
+
+
+    def __init__(self, parent=None, width=WINDOW_WIDTH, height=WINDOW_HEIGHT):    
+        @dataclass
+        class Node:
+            xpos: int
+            ypos: int
+            color: tuple[int, int, int]
+            disp_xpos: int
+            disp_ypos: int
+            left_domain: int
+            right_domain:int
+            children: List["Node"] = field(default_factory=list)
+            is_start: bool = False
+            is_end: bool = False
+        @dataclass
+        class Tile:
+            xpos: int
+            ypos: int
+            color: tuple[int, int, int]
+        
         super().__init__(parent, width, height)
         WINDOW_WIDTH = width
         WINDOW_HEIGHT = height
-
+        self.GRID_SIZE = 15     # Number of rows and columns in the maze
+        self.CELL_SIZE = WINDOW_HEIGHT // self.GRID_SIZE  # Size of each cell
+        TREE_X_OFFSET = (WINDOW_HEIGHT+WINDOW_WIDTH)//2  # Offset for tree visualization
+        TREE_NODE_RADIUS = 10
+        TREE_NODE_OFFSET = 6  # this is a multiplier to space the tree out vertically.
+        TREE_CURSOR_MULTIPLIER = 2  # this is a multiplier to get the size of the red square in the tree
         # Button constants
         BUTTON_WIDTH = 150
         BUTTON_HEIGHT = 50
@@ -240,6 +275,217 @@ class MazeRunner(PyGameQtWidget):
 
         self.font = pygame.font.SysFont('Arial', 20)
         self.bg_color = (50, 50, 50)
+        # This is where all the information goes that the simulation will need
+        self.WHITE = (255, 255, 255)
+        self.GREY = (128, 128, 128)
+        self.BLACK = (0, 0, 0)
+        self.RED = (255, 0, 0)
+        self.BLUE = (0, 0, 255)  # Up move
+        self.GREEN = (0, 255, 0)  # Down move
+        self.YELLOW = (255, 255, 0)  # Left move
+        self.PURPLE = (128, 0, 128)  # Right move
+        self.ORANGE = (255, 165, 0)  # For visited cells during BFS/DFS
+        self.LIGHT_BLUE = (173, 216, 230)  # For frontier cells
+
+        self.COLORS = {
+            (0, 255, 0),      # Green
+            (0, 0, 255),      # Blue
+            (255, 255, 0),    # Yellow
+            (255, 165, 0),    # Orange
+            (128, 0, 128),    # Purple
+            (0, 255, 255),    # Cyan
+            (255, 0, 255),    # Magenta
+            (173, 255, 47),   # Green Yellow
+            (255, 105, 180),  # Hot Pink
+            (75, 0, 130),     # Indigo
+            (0, 128, 128),    # Teal
+            (255, 20, 147),   # Deep Pink
+            (138, 43, 226),   # Blue Violet
+            (34, 139, 34),    # Forest Green
+            (255, 140, 0),    # Dark Orange
+            (186, 85, 211),   # Medium Orchid
+            (70, 130, 180),   # Steel Blue
+            (240, 128, 128),  # Light Coral
+            (154, 205, 50),   # Yellow Green
+            (199, 21, 133),   # Medium Violet Red
+            (218, 112, 214),  # Orchid
+            (0, 206, 209),    # Dark Turquoise
+            (205, 92, 92),    # Indian Red
+            (30, 144, 255),   # Dodger Blue
+            (127, 255, 0),    # Chartreuse
+            (233, 150, 122),  # Dark Salmon
+            (139, 69, 19),    # Saddle Brown
+            (210, 105, 30),   # Chocolate
+            (255, 99, 71)     # Tomato
+        }
+
+        self.used_colors = set()
+
+        def get_unique_color():
+            if not self.COLORS:
+                raise ValueError("No more unique colors available!")
+            color = self.COLORS.pop()  # Remove and return a random color
+            self.used_colors.add(color)
+            return color
+        
+        # Maze array (1s are walls, 0s are paths)
+        self.maze = [
+            [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1],
+            [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1],
+            [1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1],
+            [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1],
+            [1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1],
+            [1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+            [1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1],
+            [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1]
+        ]
+        
+        self.tile_map = {}  # is a dictionary that goes from a location to a tile, with it's color and corresponding tree node
+        self.node_map = {}  # is a dictionary that goes from a location to a node
+
+        # Define start and end positions
+        self.start_pos = [0, 1]
+        self.end_pos = [self.GRID_SIZE - 1, self.GRID_SIZE - 2]  # Based on the maze layout
+
+        # count number of neighbors for each location in the maze
+        self.neighbor_count = [[0 for _ in range(self.GRID_SIZE)] for _ in range(self.GRID_SIZE)]
+        for i in range(self.GRID_SIZE):
+            for j in range(self.GRID_SIZE):
+                if self.maze[i][j] == 0:
+                    # we have a valid empty space we check its top neighbor
+                    if i > 0 and self.maze[i-1][j] == 0:
+                        self.neighbor_count[i][j] += 1
+                    # now left neighbor
+                    if j > 0 and self.maze[i][j-1] == 0:
+                        self.neighbor_count[i][j] += 1
+                    # now below neighbor
+                    if i < self.GRID_SIZE - 1 and self.maze[i+1][j] == 0:
+                        self.neighbor_count[i][j] += 1
+                    # now right neighbor
+                    if j < self.GRID_SIZE - 1 and self.maze[i][j+1] == 0:
+                        self.neighbor_count[i][j] += 1
+
+        # starting position
+        self.player_pos = [0, 1]
+        self.original_player_pos = [0, 1]  # Store the original position for reset
+        
+        def add_tile(xpos: int, ypos: int, new_Color: bool, color=None):
+            # check that we have not already added the tile
+            if (xpos, ypos) in self.tile_map:
+                return
+            
+            # check that are working with an open square
+            if self.maze[xpos][ypos] != 0:
+                raise ValueError("called add tile on nonvalid square")
+            # we have a new tile, so we must add it
+            # we get a new color if the previous node told us to
+            if new_Color:
+                color = get_unique_color()
+            elif color == None:
+                raise ValueError("did not recieve a color, or permission to create a new color")
+
+            self.tile_map[(xpos, ypos)] = Tile(xpos, ypos, color)
+            
+            # now we check the neighbors and call each of them
+            # if this current cell has more than 2 neighbors, then it's children will all get new colors
+            new_color_child = (self.neighbor_count[xpos][ypos] > 2)
+
+            # we have a valid empty space we check its top neighbor
+            if xpos > 0 and self.maze[xpos-1][ypos] == 0:
+                add_tile(xpos-1, ypos, new_color_child, color)
+            # now left neighbor
+            if ypos > 0 and self.maze[xpos][ypos-1] == 0:
+                add_tile(xpos, ypos-1, new_color_child, color)
+            # now below neighbor
+            if xpos < self.GRID_SIZE - 1 and self.maze[xpos+1][ypos] == 0:
+                add_tile(xpos+1, ypos, new_color_child, color)
+            # now right neighbor
+            if ypos < self.GRID_SIZE - 1 and self.maze[xpos][ypos+1] == 0:
+                add_tile(xpos, ypos+1, new_color_child, color)
+
+        # starting preprocessing by making the first tile
+        # first empty tile is 0, 1
+        add_tile(0, 1, True)
+
+
+        def add_node(xpos: int, ypos: int, new_Node: bool, parent=None):
+            # check that we haven't added this location yet
+            if (xpos, ypos) in self.node_map:
+                return
+            # check that we are working with an open square
+            if self.maze[xpos][ypos] != 0:
+                raise ValueError("called add_node() on an nonvalid sqaure")
+            
+            # if we were told to make a new node at this location, we must add it, otherwise we use the parent node
+            if new_Node:
+                is_start = (xpos == self.start_pos[0] and ypos == self.start_pos[1])
+                is_end = (xpos == self.end_pos[0] and ypos == self.end_pos[1])
+                new_node = Node(xpos, ypos, self.tile_map[(xpos, ypos)].color, 0, 0, 0, 0, is_start=is_start, is_end=is_end)
+                # add the child to the parent node (if it exists)
+                if parent != None:
+                    parent.children.append(new_node)
+                parent = new_node
+            elif parent == None:
+                raise ValueError("do not have a parent or permission to create a parent wihtin add_node")
+            # add the correct node to the dictionary
+            self.node_map[(xpos, ypos)] = parent
+            print("added node with color", self.tile_map[(xpos, ypos)].color, "at location ", xpos, ", ", ypos)
+
+            # if the current cell has more than 2 neighbors, then it's children will get new nodes in the tree
+            new_node_child = self.neighbor_count[xpos][ypos] > 2
+
+            # now we explore each of the children
+            if xpos > 0 and self.maze[xpos-1][ypos] == 0:
+                add_node(xpos-1, ypos, new_node_child, parent)
+            # now left neighbor
+            if ypos > 0 and self.maze[xpos][ypos-1] == 0:
+                add_node(xpos, ypos-1, new_node_child, parent)
+            # now below neighbor
+            if xpos < self.GRID_SIZE - 1 and self.maze[xpos+1][ypos] == 0:
+                add_node(xpos+1, ypos, new_node_child, parent)
+            # now right neighbor
+            if ypos < self.GRID_SIZE - 1 and self.maze[xpos][ypos+1] == 0:
+                add_node(xpos, ypos+1, new_node_child, parent)
+        
+        # now start preprocessing the first location for the tree
+        add_node(0, 1, True)
+
+        
+        # now determine the display positions of the nodes in the tree
+        def update_pos(node, disp_x, disp_y, new_domain_left, new_domain_right):
+            # update the current node with the correct values
+            node.disp_xpos = disp_x
+            node.disp_ypos = disp_y
+            node.left_domain = new_domain_left
+            node.right_domain = new_domain_right
+
+            # update the children with the correct values (each node has 0 or 2 children)
+            left = True
+            for child in node.children:
+                if left:
+                    # we are populating a left child
+                    update_pos(child, (disp_x + new_domain_left)//2, disp_y + TREE_NODE_RADIUS * TREE_NODE_OFFSET, new_domain_left, disp_x)
+                else:
+                    # we are populating a right child
+                    update_pos(child, (disp_x + new_domain_right)//2, disp_y + TREE_NODE_RADIUS * TREE_NODE_OFFSET, disp_x, new_domain_right)
+                left = False
+
+        # setting all of the locations of the tree
+        update_pos(self.node_map[(0, 1)], TREE_X_OFFSET, TREE_NODE_RADIUS * TREE_CURSOR_MULTIPLIER, WINDOW_HEIGHT + TREE_NODE_RADIUS, WINDOW_WIDTH - TREE_NODE_RADIUS)
+
+        # For BFS/DFS exploration visualization
+        self.visited_cells = set()  # Cells that have been explored
+        self.frontier_cells = set()  # Cells that are in the queue to be explored
+        self.path_cells = set()  # Cells that are part of the final solution
+
+
 
     def update_simulation(self):
         self.process_pygame_events()
@@ -250,8 +496,37 @@ class MazeRunner(PyGameQtWidget):
             text = self.font.render(button['text'], True, (255, 255, 255))
             text_rect = text.get_rect(center=button['rect'].center)
             self.surface.blit(text, text_rect)
+        self.draw_maze()
 
         self.update()
+
+    def draw_maze(self):
+        for row in range(self.GRID_SIZE):
+            for col in range(self.GRID_SIZE):
+                if self.maze[row][col] == 1:
+                    color = self.BLACK
+                elif (row, col) in self.path_cells:
+                    # Part of the final solution path
+                    color = self.GREEN
+                elif (row, col) in self.visited_cells:
+                    # Visited during BFS/DFS exploration
+                    color = self.GREY
+                elif (row, col) in self.frontier_cells:
+                    # In the frontier (queue)
+                    color = self.LIGHT_BLUE
+                elif (row, col) == (self.start_pos[0], self.start_pos[1]):
+                    # Start position
+                    color = self.BLUE
+                elif (row, col) == (self.end_pos[0], self.end_pos[1]):
+                    # End position
+                    color = self.GREEN
+                else:
+                    # Normal open cell
+                    color = self.tile_map[(row, col)].color
+                pygame.draw.rect(self.surface, color, (col * self.CELL_SIZE, row * self.CELL_SIZE, self.CELL_SIZE, self.CELL_SIZE))
+
+
+
 
     def process_pygame_events(self):
         for event in self.pygame_events:
