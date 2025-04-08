@@ -215,9 +215,9 @@ class MazeRunner(PyGameQtWidget):
         self.GRID_SIZE = 15     # Number of rows and columns in the maze
         self.CELL_SIZE = WINDOW_HEIGHT // self.GRID_SIZE  # Size of each cell
         TREE_X_OFFSET = (WINDOW_HEIGHT+WINDOW_WIDTH)//2  # Offset for tree visualization
-        TREE_NODE_RADIUS = 10
+        self.TREE_NODE_RADIUS = 10
         TREE_NODE_OFFSET = 6  # this is a multiplier to space the tree out vertically.
-        TREE_CURSOR_MULTIPLIER = 2  # this is a multiplier to get the size of the red square in the tree
+        self.TREE_CURSOR_MULTIPLIER = 2  # this is a multiplier to get the size of the red square in the tree
         # Button constants
         BUTTON_WIDTH = 150
         BUTTON_HEIGHT = 50
@@ -471,14 +471,14 @@ class MazeRunner(PyGameQtWidget):
             for child in node.children:
                 if left:
                     # we are populating a left child
-                    update_pos(child, (disp_x + new_domain_left)//2, disp_y + TREE_NODE_RADIUS * TREE_NODE_OFFSET, new_domain_left, disp_x)
+                    update_pos(child, (disp_x + new_domain_left)//2, disp_y + self.TREE_NODE_RADIUS * TREE_NODE_OFFSET, new_domain_left, disp_x)
                 else:
                     # we are populating a right child
-                    update_pos(child, (disp_x + new_domain_right)//2, disp_y + TREE_NODE_RADIUS * TREE_NODE_OFFSET, disp_x, new_domain_right)
+                    update_pos(child, (disp_x + new_domain_right)//2, disp_y + self.TREE_NODE_RADIUS * TREE_NODE_OFFSET, disp_x, new_domain_right)
                 left = False
 
         # setting all of the locations of the tree
-        update_pos(self.node_map[(0, 1)], TREE_X_OFFSET, TREE_NODE_RADIUS * TREE_CURSOR_MULTIPLIER, WINDOW_HEIGHT + TREE_NODE_RADIUS, WINDOW_WIDTH - TREE_NODE_RADIUS)
+        update_pos(self.node_map[(0, 1)], TREE_X_OFFSET, self.TREE_NODE_RADIUS * self.TREE_CURSOR_MULTIPLIER, WINDOW_HEIGHT + self.TREE_NODE_RADIUS, WINDOW_WIDTH - self.TREE_NODE_RADIUS)
 
         # For BFS/DFS exploration visualization
         self.visited_cells = set()  # Cells that have been explored
@@ -516,6 +516,51 @@ class MazeRunner(PyGameQtWidget):
         )
 
 
+    def draw_tree(self):
+        def draw_subtree(subtreeroot):
+            for node in subtreeroot.children:
+                # Draw line connecting parent to child
+                pygame.draw.line(self.surface, self.BLACK, 
+                                (subtreeroot.disp_xpos, subtreeroot.disp_ypos), 
+                                (node.disp_xpos, node.disp_ypos), 2)
+                draw_subtree(node)
+
+            # Draw the node as a circle or triangle depending on if it's a start or end node
+            if subtreeroot.is_start or subtreeroot.is_end:
+                # Draw a triangle for start/end nodes
+                triangle_size = self.TREE_NODE_RADIUS * 1.5
+                if subtreeroot.is_start:
+                    # Draw an upward-pointing triangle for start
+                    points = [
+                        (subtreeroot.disp_xpos, subtreeroot.disp_ypos - triangle_size),
+                        (subtreeroot.disp_xpos - triangle_size, subtreeroot.disp_ypos + triangle_size/2),
+                        (subtreeroot.disp_xpos + triangle_size, subtreeroot.disp_ypos + triangle_size/2)
+                    ]
+                    pygame.draw.polygon(self.surface, self.BLUE, points)
+                else:
+                    # Draw a downward-pointing triangle for end
+                    points = [
+                        (subtreeroot.disp_xpos, subtreeroot.disp_ypos + triangle_size),
+                        (subtreeroot.disp_xpos - triangle_size, subtreeroot.disp_ypos - triangle_size/2),
+                        (subtreeroot.disp_xpos + triangle_size, subtreeroot.disp_ypos - triangle_size/2)
+                    ]
+                    pygame.draw.polygon(self.surface, self.GREEN, points)
+            else:
+                # Draw regular nodes as circles
+                pygame.draw.circle(self.surface, subtreeroot.color, (subtreeroot.disp_xpos, subtreeroot.disp_ypos), self.TREE_NODE_RADIUS)
+
+        
+        # draw a square for the current node
+        if (self.player_pos[0], self.player_pos[1]) in self.node_map:
+            tree_loc_x = self.node_map[(self.player_pos[0], self.player_pos[1])].disp_xpos
+            tree_loc_y = self.node_map[(self.player_pos[0], self.player_pos[1])].disp_ypos
+            pygame.draw.rect(self.surface, self.RED, (tree_loc_x - self.TREE_NODE_RADIUS * self.TREE_CURSOR_MULTIPLIER, 
+                                        tree_loc_y - self.TREE_NODE_RADIUS * self.TREE_CURSOR_MULTIPLIER, 
+                                        self.TREE_NODE_RADIUS * 2 * self.TREE_CURSOR_MULTIPLIER, 
+                                        self.TREE_NODE_RADIUS * 2 * self.TREE_CURSOR_MULTIPLIER))
+        draw_subtree(self.node_map[(0, 1)])
+
+
     def update_simulation(self):
         self.process_pygame_events()
         self.surface.fill(self.bg_color)
@@ -527,7 +572,7 @@ class MazeRunner(PyGameQtWidget):
             self.surface.blit(text, text_rect)
         self.draw_maze()
         self.draw_player()
-        # self.draw_tree()
+        self.draw_tree()
 
         self.update()
 
