@@ -247,7 +247,7 @@ class MazeRunner(PyGameQtWidget):
                 'rect': pygame.Rect(BUTTON_X_BFS, BUTTON_Y_BFS, BUTTON_WIDTH, BUTTON_HEIGHT),
                 'color': BUTTON_COLOR,
                 'text': BUTTON_TEXT_BFS,
-                'action': self.set_background_red
+                'action': self.start_bfs
             },
             {
                 'rect': pygame.Rect(BUTTON_X_DFS, BUTTON_Y_DFS, BUTTON_WIDTH, BUTTON_HEIGHT),
@@ -497,6 +497,13 @@ class MazeRunner(PyGameQtWidget):
         self.in_exploration_phase = False
         self.current_algorithm = None  # To track whether we're using BFS or DFS
 
+        # Main loop
+        self.running = True
+        self.clock = pygame.time.Clock()
+        self.move_direction = None
+        self.solution_paused = False
+        self.solution_step = False
+
 
     def draw_maze(self):
         for row in range(self.GRID_SIZE):
@@ -701,6 +708,41 @@ class MazeRunner(PyGameQtWidget):
         self.process_pygame_events()
         self.surface.fill(self.bg_color)
 
+            # Handle exploration visualization
+        if self.solving_active:
+            if not self.solution_paused and self.in_exploration_phase and self.exploration_step < len(self.exploration_history):
+                # Update visualization states
+                visited_set_temp, frontier_set_temp, current_pos_temp = self.exploration_history[self.exploration_step]
+                self.visited_cells = visited_set_temp
+                self.frontier_cells = frontier_set_temp
+                self.player_pos = [current_pos_temp[0], current_pos_temp[1]]
+                self.exploration_step += 1
+                pygame.time.delay(200)  # Slow down the visualization
+                
+                # Check if exploration is complete
+                if self.exploration_step >= len(self.exploration_history):
+                    self.in_exploration_phase = False
+                    # Reset player position to start for the solution path
+                    self.player_pos = self.original_player_pos.copy()
+                    # Mark the final path cells
+                    self.path_cells = self.final_path_set
+                    pygame.time.delay(500)  # Pause before starting the solution path
+            
+            elif not self.solution_paused and not self.in_exploration_phase and self.current_step < len(self.solution_path):
+                # Now follow the solution path
+                self.move_direction = self.solution_path[self.current_step]
+                self.current_step += 1
+                pygame.time.delay(200)  # Slow down the automatic moves
+                
+                if self.current_step >= len(self.solution_path):
+                    solving_active = False
+            if self.solution_step:
+                # return the solve to paused
+                self.solution_step = False
+                self.solution_paused = True
+
+
+
         for button in self.buttons:
             pygame.draw.rect(self.surface, button['color'], button['rect'])
             text = self.font.render(button['text'], True, (255, 255, 255))
@@ -725,6 +767,22 @@ class MazeRunner(PyGameQtWidget):
                         button['action']()
         self.pygame_events = []
 
+    def start_bfs(self):
+                # Reset and start BFS exploration
+        self.player_pos = self.original_player_pos.copy()
+        self.solution_path, self.exploration_history, self.final_path_set = self.find_path_bfs()
+        self.solving_active = True
+        self.current_step = 0
+        self.exploration_step = 0
+        self.visited_cells.clear()
+        self.frontier_cells.clear()
+        self.path_cells.clear()
+        self.in_exploration_phase = True
+        self.current_algorithm = "BFS"
+        self.move_direction = None
+        print("BFS Solution path:", self.solution_path)
+        print(f"BFS exploration: {len(self.exploration_history)} steps")
+    
     def set_background_red(self):
         self.bg_color = (100, 30, 30)
 
