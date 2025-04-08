@@ -132,7 +132,7 @@ class ClickableSimulation(PyGameQtWidget):
             }
         ]
 
-        self.font = pygame.font.Font(None, 20)
+        self.font = pygame.font.SysFont('Arial', 20)
         self.bg_color = (50, 50, 50)
 
     def update_simulation(self):
@@ -238,7 +238,7 @@ class MazeRunner(PyGameQtWidget):
             }
         ]
 
-        self.font = pygame.font.Font(None, 20)
+        self.font = pygame.font.SysFont('Arial', 20)
         self.bg_color = (50, 50, 50)
 
     def update_simulation(self):
