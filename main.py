@@ -485,21 +485,6 @@ class MazeRunner(PyGameQtWidget):
         self.frontier_cells = set()  # Cells that are in the queue to be explored
         self.path_cells = set()  # Cells that are part of the final solution
 
-
-
-    def update_simulation(self):
-        self.process_pygame_events()
-        self.surface.fill(self.bg_color)
-
-        for button in self.buttons:
-            pygame.draw.rect(self.surface, button['color'], button['rect'])
-            text = self.font.render(button['text'], True, (255, 255, 255))
-            text_rect = text.get_rect(center=button['rect'].center)
-            self.surface.blit(text, text_rect)
-        self.draw_maze()
-
-        self.update()
-
     def draw_maze(self):
         for row in range(self.GRID_SIZE):
             for col in range(self.GRID_SIZE):
@@ -524,6 +509,28 @@ class MazeRunner(PyGameQtWidget):
                     # Normal open cell
                     color = self.tile_map[(row, col)].color
                 pygame.draw.rect(self.surface, color, (col * self.CELL_SIZE, row * self.CELL_SIZE, self.CELL_SIZE, self.CELL_SIZE))
+
+    def draw_player(self):
+        pygame.draw.rect(
+            self.surface, self.RED, (self.player_pos[1] * self.CELL_SIZE, self.player_pos[0] * self.CELL_SIZE, self.CELL_SIZE, self.CELL_SIZE)
+        )
+
+
+    def update_simulation(self):
+        self.process_pygame_events()
+        self.surface.fill(self.bg_color)
+
+        for button in self.buttons:
+            pygame.draw.rect(self.surface, button['color'], button['rect'])
+            text = self.font.render(button['text'], True, (255, 255, 255))
+            text_rect = text.get_rect(center=button['rect'].center)
+            self.surface.blit(text, text_rect)
+        self.draw_maze()
+        self.draw_player()
+        # self.draw_tree()
+
+        self.update()
+
 
 
 
