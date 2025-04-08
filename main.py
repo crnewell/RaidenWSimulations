@@ -487,6 +487,17 @@ class MazeRunner(PyGameQtWidget):
         self.frontier_cells = set()  # Cells that are in the queue to be explored
         self.path_cells = set()  # Cells that are part of the final solution
 
+        # Global variables for auto-solving
+        self.solution_path = []
+        self.solving_active = False
+        self.current_step = 0
+        self.exploration_history = []
+        self.exploration_step = 0
+        self.final_path_set = set()
+        self.in_exploration_phase = False
+        self.current_algorithm = None  # To track whether we're using BFS or DFS
+
+
     def draw_maze(self):
         for row in range(self.GRID_SIZE):
             for col in range(self.GRID_SIZE):
