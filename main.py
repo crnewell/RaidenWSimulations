@@ -6,6 +6,8 @@ import numpy as np
 from PyQt5.QtGui import QImage, QPainter
 from dataclasses import dataclass, field
 from typing import List, Optional
+from collections import deque
+
 
 
 class PygameWidget(QWidget):
@@ -559,6 +561,129 @@ class MazeRunner(PyGameQtWidget):
                                         self.TREE_NODE_RADIUS * 2 * self.TREE_CURSOR_MULTIPLIER, 
                                         self.TREE_NODE_RADIUS * 2 * self.TREE_CURSOR_MULTIPLIER))
         draw_subtree(self.node_map[(0, 1)])
+
+    # Function for BFS - Modified to return exploration history
+    def find_path_bfs(self):
+        queue = deque([(self.start_pos[0], self.start_pos[1], [])]) 
+        visited = set([(self.start_pos[0], self.start_pos[1])])
+        
+        exploration_history = []  
+        
+        directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]
+        dir_names = ["UP", "RIGHT", "DOWN", "LEFT"]
+        
+        # Add initial state
+        exploration_history.append((set(visited), set(), (self.start_pos[0], self.start_pos[1])))
+        
+        while queue:
+            row, col, path = queue.popleft()
+            
+            # Check if we reached the exit
+            if row == self.end_pos[0] and col == self.end_pos[1]:
+                # Add the final path to the history
+                path_set = set()
+                current_pos = (self.start_pos[0], self.start_pos[1])
+                path_set.add(current_pos)
+                
+                for move in path:
+                    if move == "UP":
+                        current_pos = (current_pos[0] - 1, current_pos[1])
+                    elif move == "RIGHT":
+                        current_pos = (current_pos[0], current_pos[1] + 1)
+                    elif move == "DOWN":
+                        current_pos = (current_pos[0] + 1, current_pos[1])
+                    elif move == "LEFT":
+                        current_pos = (current_pos[0], current_pos[1] - 1)
+                    path_set.add(current_pos)
+                
+                return path, exploration_history, path_set
+            
+            # Add neighbors to the frontier
+            frontier = set()
+            for dr, dc in directions:
+                new_row, new_col = row + dr, col + dc
+                if (0 <= new_row < self.GRID_SIZE and 0 <= new_col < self.GRID_SIZE and 
+                    self.maze[new_row][new_col] == 0 and (new_row, new_col) not in visited):
+                    frontier.add((new_row, new_col))
+            
+            # Record current state
+            if frontier:
+                exploration_history.append((set(visited), frontier, (row, col)))
+            
+            # Try all four directions
+            for i, (dr, dc) in enumerate(directions):
+                new_row, new_col = row + dr, col + dc
+                
+                # Check if the new position is valid and not visited
+                if (0 <= new_row < self.GRID_SIZE and 0 <= new_col < self.GRID_SIZE and 
+                    self.maze[new_row][new_col] == 0 and (new_row, new_col) not in visited):
+                    queue.append((new_row, new_col, path + [dir_names[i]]))
+                    visited.add((new_row, new_col))
+        
+        return [], exploration_history, set()  # No path found
+
+    # Function for DFS - Modified to return exploration history
+    def find_path_dfs(self):
+        stack = [(self.start_pos[0], self.start_pos[1], [])]
+        visited = set([(self.start_pos[0], self.start_pos[1])])
+        
+        exploration_history = []
+        
+        directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]
+        dir_names = ["UP", "RIGHT", "DOWN", "LEFT"]
+        
+        # Add initial state
+        exploration_history.append((set(visited), set(), (self.start_pos[0], self.start_pos[1])))
+        
+        while stack:
+            row, col, path = stack.pop()  # DFS uses a stack (pop from end)
+            
+            # Check if we reached the exit
+            if row == self.end_pos[0] and col == self.end_pos[1]:
+                # Add the final path to the history
+                path_set = set()
+                current_pos = (self.start_pos[0], self.start_pos[1])
+                path_set.add(current_pos)
+                
+                for move in path:
+                    if move == "UP":
+                        current_pos = (current_pos[0] - 1, current_pos[1])
+                    elif move == "RIGHT":
+                        current_pos = (current_pos[0], current_pos[1] + 1)
+                    elif move == "DOWN":
+                        current_pos = (current_pos[0] + 1, current_pos[1])
+                    elif move == "LEFT":
+                        current_pos = (current_pos[0], current_pos[1] - 1)
+                    path_set.add(current_pos)
+                
+                return path, exploration_history, path_set
+            
+            # Add neighbors to the frontier
+            frontier = set()
+            valid_moves = []
+            
+            # Check all four directions
+            for i, (dr, dc) in enumerate(directions):
+                new_row, new_col = row + dr, col + dc
+                
+                # Check if the new position is valid and not visited
+                if (0 <= new_row < self.GRID_SIZE and 0 <= new_col < self.GRID_SIZE and 
+                    self.maze[new_row][new_col] == 0 and (new_row, new_col) not in visited):
+                    frontier.add((new_row, new_col))
+                    valid_moves.append((new_row, new_col, path + [dir_names[i]]))
+            
+            # Record current state
+            if frontier:
+                exploration_history.append((set(visited), frontier, (row, col)))
+            
+            # Add valid moves to the stack (in reverse order to prioritize UP, RIGHT, DOWN, LEFT)
+            for move in reversed(valid_moves):
+                new_row, new_col, new_path = move
+                stack.append((new_row, new_col, new_path))
+                visited.add((new_row, new_col))
+        
+        return [], exploration_history, set()  # No path found
+
 
 
     def update_simulation(self):
