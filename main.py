@@ -259,7 +259,7 @@ class MazeRunner(PyGameQtWidget):
                 'rect': pygame.Rect(BUTTON_X_RESET, BUTTON_Y_RESET, BUTTON_WIDTH, BUTTON_HEIGHT),
                 'color': BUTTON_COLOR,
                 'text': BUTTON_TEXT_RESET,
-                'action': self.set_background_green
+                'action': self.reset
             },
             {
                 'rect': pygame.Rect(BUTTON_X_PAUSE, BUTTON_Y_PAUSE, BUTTON_WIDTH, BUTTON_HEIGHT),
@@ -797,6 +797,19 @@ class MazeRunner(PyGameQtWidget):
         self.move_direction = None
         print("DFS Solution path:", self.solution_path)
         print(f"DFS exploration: {len(self.exploration_history)} steps")
+
+    def reset(self):
+        print("MAZE RESET PRESSED")
+        # Reset 
+        self.player_pos = self.original_player_pos.copy()
+        self.solving_active = False
+        self.current_step = 0
+        self.exploration_step = 0
+        self.visited_cells.clear()
+        self.frontier_cells.clear()
+        self.path_cells.clear()
+        self.move_direction = None
+        self.solution_paused = False
 
 
 
