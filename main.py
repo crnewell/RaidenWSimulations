@@ -108,6 +108,7 @@ class PyGameQtWidget(QWidget):
         self.pygame_events.append(pygame_event)
 
     def keyPressEvent(self, event):
+        # TODO: add every key that you need to be pressed in pygame
         if event.key() == Qt.Key_Up:
             print("up key pressed")
             pygame_event = pygame.event.Event(
@@ -777,7 +778,29 @@ class MazeRunner(PyGameQtWidget):
                 # return the solve to paused
                 self.solution_step = False
                 self.solution_paused = True
-
+        
+            # Handle player movement (only if solving is inactive)
+        else:
+            if self.move_direction == "UP":
+                self.move_direction = None
+                new_pos = [self.player_pos[0] - 1, self.player_pos[1]]
+                if 0 <= new_pos[0] < self.GRID_SIZE and self.maze[new_pos[0]][new_pos[1]] == 0:
+                    self.player_pos = new_pos
+            elif self.move_direction == "DOWN":
+                self.move_direction = None
+                new_pos = [self.player_pos[0] + 1, self.player_pos[1]]
+                if 0 <= new_pos[0] < self.GRID_SIZE and self.maze[new_pos[0]][new_pos[1]] == 0:
+                    self.player_pos = new_pos
+            elif self.move_direction == "LEFT":
+                self.move_direction = None
+                new_pos = [self.player_pos[0], self.player_pos[1] - 1]
+                if 0 <= new_pos[1] < self.GRID_SIZE and self.maze[new_pos[0]][new_pos[1]] == 0:
+                    self.player_pos = new_pos
+            elif self.move_direction == "RIGHT":
+                self.move_direction = None
+                new_pos = [self.player_pos[0], self.player_pos[1] + 1]
+                if 0 <= new_pos[1] < self.GRID_SIZE and self.maze[new_pos[0]][new_pos[1]] == 0:
+                    self.player_pos = new_pos
 
 
         for button in self.buttons:
@@ -879,15 +902,7 @@ class MazeRunner(PyGameQtWidget):
             self.solution_step = True
             self.solution_paused = False
 
-    
-    def set_background_red(self):
-        self.bg_color = (100, 30, 30)
 
-    def set_background_blue(self):
-        self.bg_color = (30, 30, 100)
-
-    def set_background_green(self):
-        self.bg_color = (30, 100, 30)
 
 
 
