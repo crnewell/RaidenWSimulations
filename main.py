@@ -110,12 +110,30 @@ class PyGameQtWidget(QWidget):
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Up:
             print("up key pressed")
+            pygame_event = pygame.event.Event(
+                pygame.KEYDOWN,
+                {'key': pygame.K_UP}
+            )
         elif event.key() == Qt.Key_Down:
             print("down key pressed")
+            pygame_event = pygame.event.Event(
+                pygame.KEYDOWN,
+                {'key': pygame.K_DOWN}
+            )
         elif event.key() == Qt.Key_Right:
             print("right key pressed")
+            pygame_event = pygame.event.Event(
+                pygame.KEYDOWN,
+                {'key': pygame.K_RIGHT}
+            )
         elif event.key() == Qt.Key_Left:
             print("left key pressed")
+            pygame_event = pygame.event.Event(
+                pygame.KEYDOWN,
+                {'key': pygame.K_LEFT}
+            )
+        self.pygame_events.append(pygame_event)
+
 
 
 
@@ -795,10 +813,13 @@ class MazeRunner(PyGameQtWidget):
                     print("got up move")
                 elif event.key == pygame.K_DOWN:
                     self.move_direction = "DOWN"
+                    print("got down move")
                 elif event.key == pygame.K_LEFT:
                     self.move_direction = "LEFT"
+                    print("got left move")
                 elif event.key == pygame.K_RIGHT:
                     self.move_direction = "RIGHT"
+                    print("got right move")
         self.pygame_events = []
 
     def start_bfs(self):
