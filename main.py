@@ -271,7 +271,7 @@ class MazeRunner(PyGameQtWidget):
                 'rect': pygame.Rect(BUTTON_X_STEP, BUTTON_Y_STEP, BUTTON_WIDTH, BUTTON_HEIGHT),
                 'color': BUTTON_COLOR,
                 'text': BUTTON_TEXT_STEP,
-                'action': self.set_background_green
+                'action': self.step
             }
         ]
 
@@ -817,6 +817,14 @@ class MazeRunner(PyGameQtWidget):
         self.solution_paused = not self.solution_paused
         self.move_direction = None
 
+    def step(self):
+        print("SOLUTION STEP PRESSED")
+        self.move_direction = None
+        if self.solution_paused:
+            self.solution_step = True
+            self.solution_paused = False
+
+    
     def set_background_red(self):
         self.bg_color = (100, 30, 30)
 
