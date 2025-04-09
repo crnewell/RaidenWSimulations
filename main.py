@@ -253,7 +253,7 @@ class MazeRunner(PyGameQtWidget):
                 'rect': pygame.Rect(BUTTON_X_DFS, BUTTON_Y_DFS, BUTTON_WIDTH, BUTTON_HEIGHT),
                 'color': BUTTON_COLOR,
                 'text': BUTTON_TEXT_DFS,
-                'action': self.set_background_blue
+                'action': self.start_dfs
             },
             {
                 'rect': pygame.Rect(BUTTON_X_RESET, BUTTON_Y_RESET, BUTTON_WIDTH, BUTTON_HEIGHT),
@@ -783,6 +783,23 @@ class MazeRunner(PyGameQtWidget):
         print("BFS Solution path:", self.solution_path)
         print(f"BFS exploration: {len(self.exploration_history)} steps")
     
+    def start_dfs(self):
+        self.player_pos = self.original_player_pos.copy()
+        self.solution_path, self.exploration_history, self.final_path_set = self.find_path_dfs()
+        self.solving_active = True
+        self.current_step = 0
+        self.exploration_step = 0
+        self.visited_cells.clear()
+        self.frontier_cells.clear()
+        self.path_cells.clear()
+        self.in_exploration_phase = True
+        self.current_algorithm = "DFS"
+        self.move_direction = None
+        print("DFS Solution path:", self.solution_path)
+        print(f"DFS exploration: {len(self.exploration_history)} steps")
+
+
+
     def set_background_red(self):
         self.bg_color = (100, 30, 30)
 
