@@ -46,6 +46,7 @@ class PyGameQtWidget(QWidget):
 
     def __init__(self, parent=None, width=200, height=100):
         super().__init__(parent)
+        self.setFocusPolicy(Qt.StrongFocus)
         self.setFixedSize(width, height)
         if not pygame.get_init():
             pygame.init()
@@ -105,6 +106,18 @@ class PyGameQtWidget(QWidget):
             {'pos': (x, y), 'buttons': self.get_button_state()}
         )
         self.pygame_events.append(pygame_event)
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Up:
+            print("up key pressed")
+        elif event.key() == Qt.Key_Down:
+            print("down key pressed")
+        elif event.key() == Qt.Key_Right:
+            print("right key pressed")
+        elif event.key() == Qt.Key_Left:
+            print("left key pressed")
+
+
 
     def get_button_state(self):
         return (0, 0, 0)
@@ -713,8 +726,9 @@ class MazeRunner(PyGameQtWidget):
         self.surface.fill(self.bg_color)
 
             # Handle exploration visualization
-        if self.solving_active and self.update_time():
-            if not self.solution_paused and self.in_exploration_phase and self.exploration_step < len(self.exploration_history):
+        if self.solving_active:
+            if not self.solution_paused and self.update_time() and self.in_exploration_phase and self.exploration_step < len(self.exploration_history):
+                self.tick()
                 # Update visualization states
                 visited_set_temp, frontier_set_temp, current_pos_temp = self.exploration_history[self.exploration_step]
                 self.visited_cells = visited_set_temp
@@ -732,7 +746,8 @@ class MazeRunner(PyGameQtWidget):
                     self.path_cells = self.final_path_set
                     # pygame.time.delay(500)  # Pause before starting the solution path
             
-            elif not self.solution_paused and not self.in_exploration_phase and self.current_step < len(self.solution_path):
+            elif not self.solution_paused and self.update_time() and not self.in_exploration_phase and self.current_step < len(self.solution_path):
+                self.tick()
                 # Now follow the solution path
                 self.move_direction = self.solution_path[self.current_step]
                 self.current_step += 1
@@ -744,7 +759,6 @@ class MazeRunner(PyGameQtWidget):
                 # return the solve to paused
                 self.solution_step = False
                 self.solution_paused = True
-            self.tick()
 
 
 
@@ -758,7 +772,7 @@ class MazeRunner(PyGameQtWidget):
         self.draw_tree()
 
         self.update()
-        print("UPDATED SIM, FRAMERATE: ", pygame.time.get_ticks())
+        # print("UPDATED SIM, FRAMERATE: ", pygame.time.get_ticks())
 
 
 
@@ -770,10 +784,21 @@ class MazeRunner(PyGameQtWidget):
     def process_pygame_events(self):
         for event in self.pygame_events:
             if event.type == pygame.MOUSEBUTTONDOWN:
+                print("got button click")
                 # Check for button clicks
                 for button in self.buttons:
                     if button['rect'].collidepoint(event.pos):
                         button['action']()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    self.move_direction = "UP"
+                    print("got up move")
+                elif event.key == pygame.K_DOWN:
+                    self.move_direction = "DOWN"
+                elif event.key == pygame.K_LEFT:
+                    self.move_direction = "LEFT"
+                elif event.key == pygame.K_RIGHT:
+                    self.move_direction = "RIGHT"
         self.pygame_events = []
 
     def start_bfs(self):
