@@ -138,6 +138,7 @@ class ClickableSimulation(PyGameQtWidget):
 
         self.font = pygame.font.SysFont('Arial', 20)
         self.bg_color = (50, 50, 50)
+        print("INITIALIZED SIM")
 
     def update_simulation(self):
         self.process_pygame_events()
@@ -148,7 +149,7 @@ class ClickableSimulation(PyGameQtWidget):
             text = self.font.render(button['text'], True, (255, 255, 255))
             text_rect = text.get_rect(center=button['rect'].center)
             self.surface.blit(text, text_rect)
-
+        print("UPDATED SIM")
         self.update()
 
     def process_pygame_events(self):
@@ -276,7 +277,7 @@ class MazeRunner(PyGameQtWidget):
         ]
 
         self.font = pygame.font.SysFont('Arial', 20)
-        self.bg_color = (50, 50, 50)
+        self.bg_color = (255, 255, 255)
         # This is where all the information goes that the simulation will need
         self.WHITE = (255, 255, 255)
         self.GREY = (128, 128, 128)
@@ -503,6 +504,9 @@ class MazeRunner(PyGameQtWidget):
         self.move_direction = None
         self.solution_paused = False
         self.solution_step = False
+        self.clock.tick()
+        self.last_tick = pygame.time.get_ticks()
+        self.time_delay = 300
 
 
     def draw_maze(self):
@@ -709,7 +713,7 @@ class MazeRunner(PyGameQtWidget):
         self.surface.fill(self.bg_color)
 
             # Handle exploration visualization
-        if self.solving_active:
+        if self.solving_active and self.update_time():
             if not self.solution_paused and self.in_exploration_phase and self.exploration_step < len(self.exploration_history):
                 # Update visualization states
                 visited_set_temp, frontier_set_temp, current_pos_temp = self.exploration_history[self.exploration_step]
@@ -717,7 +721,7 @@ class MazeRunner(PyGameQtWidget):
                 self.frontier_cells = frontier_set_temp
                 self.player_pos = [current_pos_temp[0], current_pos_temp[1]]
                 self.exploration_step += 1
-                pygame.time.delay(200)  # Slow down the visualization
+                # pygame.time.delay(500)  # Slow down the visualization
                 
                 # Check if exploration is complete
                 if self.exploration_step >= len(self.exploration_history):
@@ -726,13 +730,13 @@ class MazeRunner(PyGameQtWidget):
                     self.player_pos = self.original_player_pos.copy()
                     # Mark the final path cells
                     self.path_cells = self.final_path_set
-                    pygame.time.delay(500)  # Pause before starting the solution path
+                    # pygame.time.delay(500)  # Pause before starting the solution path
             
             elif not self.solution_paused and not self.in_exploration_phase and self.current_step < len(self.solution_path):
                 # Now follow the solution path
                 self.move_direction = self.solution_path[self.current_step]
                 self.current_step += 1
-                pygame.time.delay(200)  # Slow down the automatic moves
+                # pygame.time.delay(200)  # Slow down the automatic moves
                 
                 if self.current_step >= len(self.solution_path):
                     solving_active = False
@@ -740,6 +744,7 @@ class MazeRunner(PyGameQtWidget):
                 # return the solve to paused
                 self.solution_step = False
                 self.solution_paused = True
+            self.tick()
 
 
 
@@ -753,11 +758,15 @@ class MazeRunner(PyGameQtWidget):
         self.draw_tree()
 
         self.update()
+        print("UPDATED SIM, FRAMERATE: ", pygame.time.get_ticks())
 
 
 
-
-
+    def tick(self):
+        self.last_tick = pygame.time.get_ticks()
+    def update_time(self):
+        return (pygame.time.get_ticks() - self.last_tick > self.time_delay)
+    
     def process_pygame_events(self):
         for event in self.pygame_events:
             if event.type == pygame.MOUSEBUTTONDOWN:
