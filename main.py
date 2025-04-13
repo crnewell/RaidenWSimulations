@@ -7,8 +7,7 @@ from PyQt5.QtGui import QImage, QPainter
 from dataclasses import dataclass, field
 from typing import List, Optional
 from collections import deque
-
-
+import subprocess
 
 class PygameWidget(QWidget):
     def __init__(self, parent=None):
@@ -903,13 +902,6 @@ class MazeRunner(PyGameQtWidget):
             self.solution_paused = False
 
 
-
-
-
-
-
-
-
 class PygameQtApp(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -932,7 +924,7 @@ class PygameQtApp(QMainWindow):
             {"name": "Moving Circle", "class": PygameWidget},
             {"name": "Button Demo", "class": ClickableSimulation},
             {"name": "MazeRunner", "class": MazeRunner},
-            {"name": "Visualization 4", "class": None},
+            {"name": "Graph Manipulation", "class": None, "external": "adjlist.py"},
             {"name": "Visualization 5", "class": None},
             {"name": "Visualization 6", "class": None},
             {"name": "Visualization 7", "class": None}
@@ -965,6 +957,24 @@ class PygameQtApp(QMainWindow):
         central_widget.setLayout(self.layout)
 
     def update_content(self, visualization_number):
+        sim_index = visualization_number - 1
+
+        # Check if this is an external visualization
+        if sim_index < len(self.simulations) and self.simulations[sim_index].get("external"):
+            # Hide main window
+            self.hide()
+
+            # Run the external Python file
+            external_file = self.simulations[sim_index]["external"]
+            try:
+                subprocess.run([sys.executable, external_file])
+            except Exception as e:
+                print(f"Error running external visualization: {e}")
+
+            # Show main window again after external program closes
+            self.show()
+            return
+
         if hasattr(self, 'visualization_widget') and self.visualization_widget is not None:
             self.visualization_layout.removeWidget(self.visualization_widget)
             self.visualization_widget.hide()

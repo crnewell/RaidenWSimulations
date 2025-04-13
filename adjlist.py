@@ -3,6 +3,7 @@ import sys
 import math
 import time
 
+
 pygame.init()
 
 WIDTH, HEIGHT = 800, 600
@@ -18,7 +19,7 @@ LIGHT_GRAY = (200, 200, 200)
 MAX_NODES = 7
 font = pygame.font.Font(None, 24)
 small_font = pygame.font.Font(None, 18)
-
+#
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Graph Visualization")
 
@@ -37,6 +38,8 @@ traversal_queue = []  # For BFS
 traversal_stack = []  # For DFS
 traversal_delay = 500  # milliseconds
 last_traversal_time = 0
+back_button_rect = pygame.Rect(WIDTH - 110, HEIGHT - 40, 100, 30)
+back_button_active = False
 
 # Variables for editing adjacency representations
 editing_matrix = False
@@ -283,6 +286,14 @@ def draw_graph():
         instruction = small_font.render(text, True, BLACK)
         screen.blit(instruction, (WIDTH - 200, 10 + i * 20))
 
+    if back_button_active:
+        pygame.draw.rect(screen, GREEN, back_button_rect)
+    else:
+        pygame.draw.rect(screen, BLUE, back_button_rect)
+    pygame.draw.rect(screen, BLACK, back_button_rect, 1)
+    back_text = font.render("Back", True, WHITE)
+    screen.blit(back_text, (back_button_rect.x + 30, back_button_rect.y + 7))
+
     pygame.display.flip()
 
 
@@ -448,12 +459,15 @@ def add_new_node():
         adj_list[node_idx] = []
         initialize_adj_matrix()
 
+def check_back_button(pos):
+    return back_button_rect.collidepoint(pos)
+
 
 running = True
 while running:
     current_time = pygame.time.get_ticks()
 
-    # Handle traversal animations
+    # Handle traversal animations (unchanged)
     if traversal_mode and current_time - last_traversal_time > traversal_delay:
         if traversal_mode == "BFS":
             if not perform_bfs_step():
@@ -472,29 +486,25 @@ while running:
         elif event.type == pygame.KEYDOWN:
             if active_text_input:
                 if event.key == pygame.K_RETURN:
-                    # Submit the edited text
                     parse_adj_list_input(editing_row, edit_text)
                     active_text_input = False
                     edit_text = ""
                 elif event.key == pygame.K_ESCAPE:
-                    # Cancel editing
                     active_text_input = False
                     edit_text = ""
                 elif event.key == pygame.K_BACKSPACE:
                     edit_text = edit_text[:-1]
                 else:
-                    # Add character if it's a digit or comma
                     if event.unicode.isdigit() or event.unicode == ',':
                         edit_text += event.unicode
             else:
-                if event.key == pygame.K_m and not traversal_mode:  # Toggle Matrix/List view
+                if event.key == pygame.K_m and not traversal_mode:
                     show_matrix = not show_matrix
-                    # Reset editing mode when switching views
                     editing_matrix = False
                     editing_list = False
                     editing_row = None
                     matrix_cell = None
-                elif event.key == pygame.K_e and not traversal_mode:  # Toggle edit mode
+                elif event.key == pygame.K_e and not traversal_mode:
                     if show_matrix:
                         editing_matrix = not editing_matrix
                         editing_list = False
@@ -503,21 +513,19 @@ while running:
                         editing_matrix = False
                     editing_row = None
                     matrix_cell = None
-                elif event.key == pygame.K_b and not traversal_mode:  # Start BFS
+                elif event.key == pygame.K_b and not traversal_mode:
                     if selected_node is not None:
                         start_bfs(selected_node)
                         selected_node = None
-                    # Reset editing mode
                     editing_matrix = False
                     editing_list = False
-                elif event.key == pygame.K_d and not traversal_mode:  # Start DFS
+                elif event.key == pygame.K_d and not traversal_mode:
                     if selected_node is not None:
                         start_dfs(selected_node)
                         selected_node = None
-                    # Reset editing mode
                     editing_matrix = False
                     editing_list = False
-                elif event.key == pygame.K_ESCAPE:  # Cancel traversal or editing
+                elif event.key == pygame.K_ESCAPE:
                     traversal_mode = None
                     traversal_start = None
                     traversal_visited = set()
@@ -532,6 +540,11 @@ while running:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             pos = event.pos
 
+            # NEW: If the back button is clicked, finish the program.
+            if check_back_button(pos):
+                running = False
+                continue
+
             # Handle editing mode clicks
             if editing_matrix and event.button == 1:
                 cell = check_matrix_cell_click(pos)
@@ -542,37 +555,34 @@ while running:
 
             if editing_list and event.button == 1:
                 row = check_adj_list_row_click(pos)
-
                 if row == "add_node":
                     add_new_node()
                 elif row is not None and isinstance(row, int):
                     editing_row = row
-                    # Initialize edit text with current neighbors
                     neighbors = sorted(adj_list[row])
                     edit_text = ", ".join(map(str, neighbors))
                     active_text_input = True
                 continue
 
-            # Don't allow modifications during traversal
             if traversal_mode:
                 continue
 
             clicked_node = get_clicked_node(pos)
-
             if event.button == 1:  # Left click
                 if clicked_node is not None:
                     if selected_node is None:
                         selected_node = clicked_node
                     else:
-                        if clicked_node != selected_node and (selected_node, clicked_node) not in edges and (
-                                clicked_node, selected_node) not in edges:
+                        if (clicked_node != selected_node and
+                            (selected_node, clicked_node) not in edges and
+                            (clicked_node, selected_node) not in edges):
                             edges.append((selected_node, clicked_node))
                             adj_list.setdefault(selected_node, []).append(clicked_node)
                             adj_list.setdefault(clicked_node, []).append(selected_node)
                             initialize_adj_matrix()
                         selected_node = None
                 else:
-                    if len(nodes) < MAX_NODES and not is_in_adj_list_area(pos):  # Check node limit and position
+                    if len(nodes) < MAX_NODES and not is_in_adj_list_area(pos) and not check_back_button(pos):
                         nodes.append(pos)
                         adj_list[len(nodes) - 1] = []
                         initialize_adj_matrix()
@@ -586,6 +596,10 @@ while running:
                         else:
                             adj_list = delete_node(clicked_node)
                         selected_node = None
+
+        elif event.type == pygame.MOUSEMOTION:
+            # Update back button active state (optional)
+            back_button_active = check_back_button(event.pos)
 
     draw_graph()
 
