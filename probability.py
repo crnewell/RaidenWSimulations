@@ -100,14 +100,14 @@ def decrease_dice():
 
 def increase_sides():
     global dice_sides
-    if dice_sides < 99:
+    if dice_sides < 9:
         dice_sides += 1
     update_dice()
 
 
 def decrease_sides():
     global dice_sides
-    if dice_sides > 4:
+    if dice_sides > 3:
         dice_sides -= 1
     update_dice()
 
