@@ -43,8 +43,8 @@ class Button:
         else:
             color = self.active_color
         
-        pygame.draw.rect(screen, color, self.rect)
-        pygame.draw.rect(screen, BLACK, self.rect, 2)
+        pygame.draw.rect(screen, color, self.rect, border_radius=10)
+        pygame.draw.rect(screen, BLACK, self.rect, 2, border_radius=10)
         
         text_surf = self.font.render(self.text, True, BLACK)
         text_rect = text_surf.get_rect(center=self.rect.center)
@@ -136,12 +136,12 @@ class Card:
         self.highlighted = False  # For search target highlighting
         
     def draw(self, screen):
-        pygame.draw.rect(screen, self.color, self.rect)
-        pygame.draw.rect(screen, BLACK, self.rect, 2)
+        pygame.draw.rect(screen, self.color, self.rect, border_radius=10)
+        pygame.draw.rect(screen, BLACK, self.rect, 2, border_radius=10)
         
         # For search target highlighting (draw thicker border)
         if self.highlighted:
-            pygame.draw.rect(screen, ORANGE, self.rect, 4)
+            pygame.draw.rect(screen, ORANGE, self.rect, 4, border_radius=10)
         
         text_surf = self.font.render(str(self.value), True, BLACK)
         text_rect = text_surf.get_rect(center=self.rect.center)
