@@ -201,7 +201,7 @@ class ClickableSimulation(PyGameQtWidget):
     def set_background_green(self):
         self.bg_color = (30, 100, 30)
 
-"""
+""" DEFUNCT CODE
 class MazeRunner(PyGameQtWidget):
     @dataclass
     class Node:
@@ -926,7 +926,7 @@ class PygameQtApp(QMainWindow):
             {"name": "Button Demo", "class": ClickableSimulation},
             {"name": "MazeRunner", "class": None, "external": "maze.py"},
             {"name": "Graph Manipulation", "class": None, "external": "adjlist.py"},
-            {"name": "Visualization 5", "class": None},
+            {"name": "Sorting/Searching", "class": None, "external": "sort.py"},
             {"name": "Visualization 6", "class": None},
             {"name": "Visualization 7", "class": None}
         ]
