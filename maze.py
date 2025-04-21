@@ -57,6 +57,9 @@ BUTTON_TEXT_DFS = "Solve DFS"
 BUTTON_TEXT_RESET = "Reset Maze"
 BUTTON_TEXT_PAUSE = "Pause/Play Solve"
 BUTTON_TEXT_STEP = "Step Solve"
+DFS_STACK_TEXT = "DFS()"
+small_font = pygame.font.SysFont('Arial', 20)
+
 
 
 WHITE = (255, 255, 255)
@@ -383,9 +386,9 @@ def draw_tree():
 
 def draw_dfs_stack():
     dfs_stack = get_tree_path()
-    print("printing DFS stack")
+    step_text = small_font.render(DFS_STACK_TEXT, True, BLACK)
     for node in dfs_stack:
-        print(node.xpos, ", ", node.ypos)
+        screen.blit(step_text, (node.disp_xpos + 21, node.disp_ypos -15))
 
 
 def draw_button(button_x, button_y, button_text, hover=False):
