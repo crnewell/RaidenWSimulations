@@ -220,7 +220,7 @@ class SortVisualizer:
         # Create buttons
         button_width, button_height = 120, 40
         button_spacing = 10
-        button_y = HEIGHT - 140
+        button_y = HEIGHT - 240
         
         # Main algorithm buttons
         self.buttons = []
