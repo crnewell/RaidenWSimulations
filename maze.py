@@ -268,6 +268,36 @@ def update_pos(node, disp_x, disp_y, new_domain_left, new_domain_right):
 # setting all of the locations of the tree
 update_pos(node_map[(0, 1)], TREE_X_OFFSET, TREE_NODE_RADIUS * TREE_CURSOR_MULTIPLIER, WINDOW_HEIGHT + TREE_NODE_RADIUS, WINDOW_WIDTH - TREE_NODE_RADIUS)
 
+def get_tree_path():
+    current_path = []
+    get_tree_path_recursive(node_map[(0, 1)], current_path)
+    return current_path
+    
+
+
+def get_tree_path_recursive(node, current_leaf_path):
+    if node == node_map[(player_pos[0], player_pos[1])]:
+        # if this has been called on the actual current node
+        # add this node to the path
+        current_leaf_path.append(node)
+        return True
+    # if this node is not the where the cursor is, check the children (if it isnt a leaf)
+    # if the node is a leaf, we return false
+    if len(node.children) == 0:
+        return False
+    # the node has children, so we return OR of the children's true/false
+    if get_tree_path_recursive(node.children[0], current_leaf_path) or get_tree_path_recursive(node.children[1], current_leaf_path):
+        # one of the children is on the path, so we add the current to the list and return true
+        current_leaf_path.append(node)
+        return True
+    # node has children, but neither are on the path, return false
+    return False
+
+
+
+
+
+
 # START DISPLAY
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("15x15 Maze Solver - BFS/DFS")
@@ -350,6 +380,13 @@ def draw_tree():
                                       TREE_NODE_RADIUS * 2 * TREE_CURSOR_MULTIPLIER, 
                                       TREE_NODE_RADIUS * 2 * TREE_CURSOR_MULTIPLIER))
     draw_subtree(node_map[(0, 1)])
+
+def draw_dfs_stack():
+    dfs_stack = get_tree_path()
+    print("printing DFS stack")
+    for node in dfs_stack:
+        print(node.xpos, ", ", node.ypos)
+
 
 def draw_button(button_x, button_y, button_text, hover=False):
     color = BUTTON_HOVER_COLOR if hover else BUTTON_COLOR
@@ -622,7 +659,7 @@ while running:
             # return the solve to paused
             solution_step = False
             solution_paused = True
-    
+    # TODO: fix moving while a solve is playing
     # Handle player movement
     if move_direction == "UP":
         new_pos = [player_pos[0] - 1, player_pos[1]]
@@ -647,6 +684,9 @@ while running:
     draw_maze()
     draw_player()
     draw_tree()
+    if solving_active and current_algorithm == "DFS":
+        draw_dfs_stack()
+
     # draw_button(WINDOW_WIDTH-200, WINDOW_HEIGHT-100, "SOLVE BFS", button_hover_bfs )
     draw_button(BUTTON_X_BFS, BUTTON_Y_BFS, BUTTON_TEXT_BFS, button_hover_bfs)
     draw_button(BUTTON_X_DFS, BUTTON_Y_DFS, BUTTON_TEXT_DFS, button_hover_dfs)
