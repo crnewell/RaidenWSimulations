@@ -723,7 +723,7 @@ class SortVisualizer:
             # Draw step info
             if self.current_step:
                 step_text = small_font.render(f"Step: {self.current_step}", True, BLACK)
-                self.screen.blit(step_text, (WIDTH // 2 - step_text.get_width() // 2, 70))
+                self.screen.blit(step_text, (WIDTH // 2 - 60, 70))
             
             # Draw mode info
             if self.paused:
@@ -731,7 +731,7 @@ class SortVisualizer:
             else:
                 mode_text = small_font.render("Status: Running", True, GREEN)
             
-            self.screen.blit(mode_text, (WIDTH // 2 - mode_text.get_width() // 2, 100))
+            self.screen.blit(mode_text, (WIDTH // 2 - 60, 100))
             
             # Draw search info if applicable
             if "search" in self.current_algorithm:
