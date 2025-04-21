@@ -26,6 +26,7 @@ CYAN = (0, 255, 255)
 GRAY = (200, 200, 200)
 PURPLE = (128, 0, 128)
 ORANGE = (255, 165, 0)
+BUTTON_COLOR = (100, 100, 200)
 
 # Button class
 class Button:
@@ -35,7 +36,7 @@ class Button:
         self.color = color
         self.hover_color = (min(color[0] + 30, 255), min(color[1] + 30, 255), min(color[2] + 30, 255))
         self.active_color = color
-        self.font = pygame.font.SysFont('Arial', 16)
+        self.font = pygame.font.SysFont('Arial', 18)
         
     def draw(self, screen, mouse_pos):
         if self.rect.collidepoint(mouse_pos):
@@ -43,10 +44,10 @@ class Button:
         else:
             color = self.active_color
         
-        pygame.draw.rect(screen, color, self.rect, border_radius=10)
-        pygame.draw.rect(screen, BLACK, self.rect, 2, border_radius=10)
+        pygame.draw.rect(screen, color, self.rect, border_radius=7)
+        # pygame.draw.rect(screen, BLACK, self.rect, 2, border_radius=7)
         
-        text_surf = self.font.render(self.text, True, BLACK)
+        text_surf = self.font.render(self.text, True, WHITE)
         text_rect = text_surf.get_rect(center=self.rect.center)
         screen.blit(text_surf, text_rect)
     
@@ -136,12 +137,12 @@ class Card:
         self.highlighted = False  # For search target highlighting
         
     def draw(self, screen):
-        pygame.draw.rect(screen, self.color, self.rect, border_radius=10)
-        pygame.draw.rect(screen, BLACK, self.rect, 2, border_radius=10)
+        pygame.draw.rect(screen, self.color, self.rect, border_radius=7)
+        pygame.draw.rect(screen, BLACK, self.rect, 2, border_radius=7)
         
         # For search target highlighting (draw thicker border)
         if self.highlighted:
-            pygame.draw.rect(screen, ORANGE, self.rect, 4, border_radius=10)
+            pygame.draw.rect(screen, ORANGE, self.rect, 4, border_radius=7)
         
         text_surf = self.font.render(str(self.value), True, BLACK)
         text_rect = text_surf.get_rect(center=self.rect.center)
@@ -225,7 +226,7 @@ class SortVisualizer:
         # Main algorithm buttons
         self.buttons = []
         algorithms = ["Bubble Sort", "Insertion Sort", "Selection Sort", "Quick Sort"]
-        colors = [CYAN, YELLOW, GREEN, PURPLE]
+        colors = [BUTTON_COLOR, BUTTON_COLOR, BUTTON_COLOR, BUTTON_COLOR]
         
         total_width = len(algorithms) * button_width + (len(algorithms) - 1) * button_spacing
         start_x = (WIDTH - total_width) // 2
@@ -237,7 +238,7 @@ class SortVisualizer:
         # Search buttons
         button_y += button_height + 20
         search_algorithms = ["Linear Search", "Binary Search", "Reset"]
-        search_colors = [ORANGE, BLUE, RED]
+        search_colors = [BUTTON_COLOR, BUTTON_COLOR, BUTTON_COLOR]
         
         total_width = len(search_algorithms) * button_width + (len(search_algorithms) - 1) * button_spacing
         start_x = (WIDTH - total_width) // 2
@@ -249,8 +250,8 @@ class SortVisualizer:
         # Control buttons
         button_y += button_height + 20
         self.control_buttons = [
-            Button(WIDTH // 2 - button_width - button_spacing, button_y, button_width, button_height, "Pause", RED),
-            Button(WIDTH // 2 + button_spacing, button_y, button_width, button_height, "Step", BLUE)
+            Button(WIDTH // 2 - button_width - button_spacing, button_y, button_width, button_height, "Pause", BUTTON_COLOR),
+            Button(WIDTH // 2 + button_spacing, button_y, button_width, button_height, "Step", BUTTON_COLOR)
         ]
         
         # Speed slider
