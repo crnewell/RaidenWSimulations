@@ -640,6 +640,7 @@ class SortVisualizer:
                             self.reset_cards()
                             self.algorithm_running = False
                             self.paused = False
+                            self.control_buttons[0].update_text("Pause")
                             self.current_algorithm = None
                             self.algorithm_generator = None
                             self.search_result = None
