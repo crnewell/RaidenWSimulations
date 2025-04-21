@@ -201,6 +201,7 @@ class ClickableSimulation(PyGameQtWidget):
     def set_background_green(self):
         self.bg_color = (30, 100, 30)
 
+"""
 class MazeRunner(PyGameQtWidget):
     @dataclass
     class Node:
@@ -900,7 +901,7 @@ class MazeRunner(PyGameQtWidget):
         if self.solution_paused:
             self.solution_step = True
             self.solution_paused = False
-
+"""
 
 class PygameQtApp(QMainWindow):
     def __init__(self):
@@ -923,7 +924,7 @@ class PygameQtApp(QMainWindow):
         self.simulations = [
             {"name": "Moving Circle", "class": PygameWidget},
             {"name": "Button Demo", "class": ClickableSimulation},
-            {"name": "MazeRunner", "class": MazeRunner},
+            {"name": "MazeRunner", "class": None, "external": "maze.py"},
             {"name": "Graph Manipulation", "class": None, "external": "adjlist.py"},
             {"name": "Visualization 5", "class": None},
             {"name": "Visualization 6", "class": None},
