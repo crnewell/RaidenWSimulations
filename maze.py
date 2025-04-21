@@ -632,6 +632,7 @@ while running:
     
     # Handle exploration visualization
     if solving_active:
+        move_direction = None
         if not solution_paused and in_exploration_phase and exploration_step < len(exploration_history):
             # Update visualization states
             visited_set, frontier_set, current_pos = exploration_history[exploration_step]
@@ -662,7 +663,6 @@ while running:
             # return the solve to paused
             solution_step = False
             solution_paused = True
-    # TODO: fix moving while a solve is playing
     # Handle player movement
     if move_direction == "UP":
         new_pos = [player_pos[0] - 1, player_pos[1]]
