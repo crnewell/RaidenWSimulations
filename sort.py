@@ -18,14 +18,14 @@ CARD_Y = HEIGHT // 2 - CARD_HEIGHT
 # Colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-BLUE = (0, 0, 255)
-YELLOW = (255, 255, 0)
+RED = (230, 96, 96)
+GREEN = (0, 192, 0)
+BLUE = (38, 247, 253)
+YELLOW = (245, 222, 73)
 CYAN = (0, 255, 255)
 GRAY = (200, 200, 200)
-PURPLE = (128, 0, 128)
-ORANGE = (255, 165, 0)
+PURPLE = (241, 125, 245)
+ORANGE = (247, 163, 94)
 BUTTON_COLOR = (100, 100, 200)
 
 # Button class
