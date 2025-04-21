@@ -473,3 +473,14 @@ while running:
 
 pygame.quit()
 sys.exit()
+
+# Make the app look more interesting
+# Make the pop-out menu happen from a button on a page, rather than clicking the simulation title
+# Add relevant code for each simulation to the PyQT page
+#
+# Create project documentation
+# Create final project presentation
+# Final project meeting, where we take notes and submit the notes and agenda (ask how he wants code)
+# Submit code, report, video, and final grade survey to Dobbins
+# End of Semester peer evaluation
+#
