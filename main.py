@@ -349,7 +349,13 @@ class PygameQtApp(QMainWindow):
             widget = self.detail_content_layout.itemAt(i).widget()
             if widget is not None and (widget.objectName() == "pseudocode_label" or 
                                     widget.objectName() == "pseudocode_label2" or
-                                    widget.objectName() == "pseudocode_label3"):
+                                    widget.objectName() == "pseudocode_label3" or
+                                    widget.objectName() == "pseudocode_adjlist" or
+                                    widget.objectName() == "pseudocode_adjmatrix" or
+                                    widget.objectName() == "pseudocode_union" or
+                                    widget.objectName() == "pseudocode_intersection" or
+                                    widget.objectName() == "pseudocode_difference" or
+                                    widget.objectName() == "pseudocode_symdifference"):
                 widget.deleteLater()
         
         # Special case for MazeRunner to include pseudocode
@@ -495,6 +501,200 @@ visit(location, path):
             """)
             pseudocode_label3.setAlignment(Qt.AlignLeft)
             self.detail_content_layout.addWidget(pseudocode_label3)
+
+        elif sim["name"] == "Graph Manipulation":
+            # Extend the description
+            self.detail_description.setText(
+                sim["description"] +
+                "\n\nPseudocode for building adjacency list and matrix:"
+            )
+
+            # Spacer before pseudocode
+            self.detail_content_layout.addItem(
+                QSpacerItem(0, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
+            )
+
+            # --- Adjacency List Pseudocode ---
+            pnl = QLabel()
+            pnl.setObjectName("pseudocode_adjlist")
+            pnl.setText(
+                "def build_adjacency_list(graph):\n"
+                "    # initialize empty list for each node\n"
+                "    adjacency = { node: [] for node in graph.nodes() }\n"
+                "    # populate edges\n"
+                "    for u, v in graph.edges():\n"
+                "        adjacency[u].append(v)\n"
+                "        adjacency[v].append(u)  # if undirected\n"
+                "    return adjacency"
+            )
+            pnl.setFont(QFont("Courier New", 10))
+            pnl.setStyleSheet(
+                "background-color: #f5f5f5;"
+                "padding: 10px;"
+                "border-radius: 4px;"
+                "border: 1px solid #ddd;"
+            )
+            pnl.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+            self.detail_content_layout.addWidget(pnl)
+
+            # Small spacer between code blocks
+            self.detail_content_layout.addItem(
+                QSpacerItem(0, 15, QSizePolicy.Minimum, QSizePolicy.Fixed)
+            )
+
+            # --- Adjacency Matrix Pseudocode ---
+            pmx = QLabel()
+            pmx.setObjectName("pseudocode_adjmatrix")
+            pmx.setText(
+                "def build_adjacency_matrix(graph):\n"
+                "    n = graph.number_of_nodes()\n"
+                "    # create n×n zero matrix\n"
+                "    matrix = [[0]*n for _ in range(n)]\n"
+                "    # fill in edges\n"
+                "    for u, v in graph.edges():\n"
+                "        matrix[u][v] = 1\n"
+                "        matrix[v][u] = 1  # if undirected\n"
+                "    return matrix"
+            )
+            pmx.setFont(QFont("Courier New", 10))
+            pmx.setStyleSheet(
+                "background-color: #f5f5f5;"
+                "padding: 10px;"
+                "border-radius: 4px;"
+                "border: 1px solid #ddd;"
+            )
+            pmx.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+            self.detail_content_layout.addWidget(pmx)
+
+            # Spacer before launching external visualization
+            self.detail_content_layout.addItem(
+                QSpacerItem(0, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
+            )
+
+        elif sim["name"] == "Set Theory":
+            # Extend the description
+            self.detail_description.setText(
+                sim["description"] +
+                "\n\nPseudocode for basic set operations:"
+            )
+
+            # Spacer before pseudocode
+            self.detail_content_layout.addItem(
+                QSpacerItem(0, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
+            )
+
+            # --- Union Pseudocode ---
+            pu = QLabel()
+            pu.setObjectName("pseudocode_union")
+            pu.setText(
+                "def union(A, B):\n"
+                "    # return a new set containing all elements in A or B\n"
+                "    result = set()\n"
+                "    for x in A:\n"
+                "        result.add(x)\n"
+                "    for x in B:\n"
+                "        result.add(x)\n"
+                "    return result"
+            )
+            pu.setFont(QFont("Courier New", 10))
+            pu.setStyleSheet(
+                "background-color: #f5f5f5;"
+                "padding: 10px;"
+                "border-radius: 4px;"
+                "border: 1px solid #ddd;"
+            )
+            pu.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+            self.detail_content_layout.addWidget(pu)
+
+            # Spacer
+            self.detail_content_layout.addItem(
+                QSpacerItem(0, 15, QSizePolicy.Minimum, QSizePolicy.Fixed)
+            )
+
+            # --- Intersection Pseudocode ---
+            pi = QLabel()
+            pi.setObjectName("pseudocode_intersection")
+            pi.setText(
+                "def intersection(A, B):\n"
+                "    # return a new set containing elements in both A and B\n"
+                "    result = set()\n"
+                "    for x in A:\n"
+                "        if x in B:\n"
+                "            result.add(x)\n"
+                "    return result"
+            )
+            pi.setFont(QFont("Courier New", 10))
+            pi.setStyleSheet(
+                "background-color: #f5f5f5;"
+                "padding: 10px;"
+                "border-radius: 4px;"
+                "border: 1px solid #ddd;"
+            )
+            pi.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+            self.detail_content_layout.addWidget(pi)
+
+            # Spacer
+            self.detail_content_layout.addItem(
+                QSpacerItem(0, 15, QSizePolicy.Minimum, QSizePolicy.Fixed)
+            )
+
+            # --- Difference Pseudocode ---
+            pd = QLabel()
+            pd.setObjectName("pseudocode_difference")
+            pd.setText(
+                "def difference(A, B):\n"
+                "    # return elements in A that are not in B\n"
+                "    result = set()\n"
+                "    for x in A:\n"
+                "        if x not in B:\n"
+                "            result.add(x)\n"
+                "    return result"
+            )
+            pd.setFont(QFont("Courier New", 10))
+            pd.setStyleSheet(
+                "background-color: #f5f5f5;"
+                "padding: 10px;"
+                "border-radius: 4px;"
+                "border: 1px solid #ddd;"
+            )
+            pd.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+            self.detail_content_layout.addWidget(pd)
+
+            # Spacer
+            self.detail_content_layout.addItem(
+                QSpacerItem(0, 15, QSizePolicy.Minimum, QSizePolicy.Fixed)
+            )
+
+            # --- Symmetric Difference Pseudocode ---
+            ps = QLabel()
+            ps.setObjectName("pseudocode_symdifference")
+            ps.setText(
+                "def symmetric_difference(A, B):\n"
+                "    # return elements in A or B but not both\n"
+                "    result = set()\n"
+                "    for x in A:\n"
+                "        if x not in B:\n"
+                "            result.add(x)\n"
+                "    for x in B:\n"
+                "        if x not in A:\n"
+                "            result.add(x)\n"
+                "    return result"
+            )
+            ps.setFont(QFont("Courier New", 10))
+            ps.setStyleSheet(
+                "background-color: #f5f5f5;"
+                "padding: 10px;"
+                "border-radius: 4px;"
+                "border: 1px solid #ddd;"
+            )
+            ps.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+            self.detail_content_layout.addWidget(ps)
+
+            # Spacer before launch button
+            self.detail_content_layout.addItem(
+                QSpacerItem(0, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
+            )
+
         
         self.launch_button.setStyleSheet(f"""
             QPushButton {{

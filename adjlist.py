@@ -274,17 +274,19 @@ def draw_graph():
             screen.blit(stack_surface, (WIDTH - 250, HEIGHT - 25))
 
     instructions = [
-        f"Left Click: Add node/edge ({len(nodes)}/{MAX_NODES})",
-        "Right Click: Delete node/edge",
-        "M: Toggle Adj. Matrix/List",
-        "E: Toggle Edit Matrix/List",
+        f"Left Click: Add Node ({len(nodes)}/{MAX_NODES})",
+        "Left Click Two Nodes: Add Edge",
+        "Right Click Twice: Delete Node",
+        "Right Click Two Nodes: Delete Edge",
+        "M: Matrix/List View Toggle",
+        "E: Edit Toggle",
         "B: Start BFS Traversal",
         "D: Start DFS Traversal",
         "ESC: Cancel Traversal/Editing"
     ]
     for i, text in enumerate(instructions):
         instruction = small_font.render(text, True, BLACK)
-        screen.blit(instruction, (WIDTH - 200, 10 + i * 20))
+        screen.blit(instruction, (WIDTH - 210, 10 + i * 20))
 
     if back_button_active:
         pygame.draw.rect(screen, GREEN, back_button_rect)
