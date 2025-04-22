@@ -199,6 +199,7 @@ class PygameQtApp(QMainWindow):
     def create_detail_screen(self):
         # Create the detail screen for visualization description
         self.detail_widget = QWidget()
+        self.detail_widget.setStyleSheet("background-color: #ffffff;")
         self.detail_layout = QVBoxLayout(self.detail_widget)
         self.detail_layout.setContentsMargins(0, 0, 0, 0)
         self.detail_layout.setSpacing(0)
