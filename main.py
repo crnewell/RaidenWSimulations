@@ -102,31 +102,31 @@ class PygameQtApp(QMainWindow):
             {
                 "name": "MazeRunner",
                 "external": "maze.py",
-                "description": "A visualization that demonstrates pathfinding algorithms in a maze environment. Explore how algorithms like Breadth-First Search, and Depth-First Search navigate through complex mazes, and how this might be thought of as searching a tree.",
+                "description": "Solve a maze by using the breadth-first or depth-first searches on the tree representation of the maze",
                 "color": "#4CAF50"  # Green
             },
             {
                 "name": "Graph Manipulation",
                 "external": "adjlist.py",
-                "description": "Interactive graph manipulation tools to understand graph theory concepts. Create, modify, and analyze graphs to learn about connectivity, cycles, and traversal algorithms.",
+                "description": "Create a graph and convert it to an adjacency list, or vice versa.",
                 "color": "#2196F3"  # Blue
             },
             {
                 "name": "Sorting/Searching",
                 "external": "sort.py",
-                "description": "Visualize different sorting and searching algorithms in action. Compare the efficiency and behavior of  insertion sort, selection sort, bubble sort, quick sort, and linear and binary search.",
+                "description": "Visualize different sorting and searching algorithms in action.",
                 "color": "#9C27B0"  # Purple
             },
             {
                 "name": "Probability",
                 "external": "probability.py",
-                "description": "Explore probability concepts through interactive simulations. Understand distributions, random variables, and statistical concepts through visual demonstrations.",
+                "description": "Understand basic probability concepts through a dice simulation",
                 "color": "#FF9800"  # Orange
             },
             {
                 "name": "Set Theory",
                 "external": "setTheory.py",
-                "description": "Visual representations of set operations and relationships. Learn about unions, intersections, complements, and other set operations through interactive diagrams.",
+                "description": "Learn about unions, intersections, and other common set operations through playing cards",
                 "color": "#E91E63"  # Pink
             }
         ]
@@ -400,7 +400,108 @@ visit(location, path):
             else:
                 # Fallback if spacer not found
                 self.detail_content_layout.addWidget(pseudocode_label)
-        
+
+
+        elif sim["name"] == "Probability":
+            self.detail_content_layout.addItem(QSpacerItem(60, 20, QSizePolicy.Minimum, QSizePolicy.Fixed))
+
+            # Create pseudocode label for Exact Roll Probability
+            pseudocode_label = QLabel()
+            pseudocode_label.setObjectName("pseudocode_label")
+            pseudocode_label.setText("""exact_roll_probability():
+                probability = 1
+                for die in dice:
+                    probability *= (1 / die.num_sides)
+                return probability
+                """)
+            pseudocode_label.setFont(QFont("Courier New", 10))
+            pseudocode_label.setStyleSheet("""
+                            background-color: #f5f5f5;
+                            padding: 15px;
+                            border-radius: 5px;
+                            border: 1px solid #e0e0e0;
+                            text-align: left;
+                        """)
+            pseudocode_label.setAlignment(Qt.AlignLeft)
+            self.detail_content_layout.addWidget(pseudocode_label)
+
+            # Add spacing between code blocks
+            self.detail_content_layout.addItem(QSpacerItem(20, 15, QSizePolicy.Minimum, QSizePolicy.Fixed))
+
+            # Create pseudocode label for Insertion Sort
+            pseudocode_label2 = QLabel()
+            pseudocode_label2.setObjectName("pseudocode_label2")
+            pseudocode_label2.setText("""unordered_roll_probability(target_roll, dice):
+    value_counts = {}
+    for value in target_roll:
+        if value not in value_counts:
+            value_counts[value] = 0
+        value_counts[value] += 1
+
+    num_permutations = factorial(len(target_roll))
+    for count in value_counts.values():
+        num_permutations /= factorial(count)
+
+    probability = 1
+    for i in range(len(target_roll)):
+        probability *= (1 / dice[i].num_sides)
+
+    return probability * num_permutations""")
+            pseudocode_label2.setFont(QFont("Courier New", 10))
+            pseudocode_label2.setStyleSheet("""
+                            background-color: #f5f5f5;
+                            padding: 15px;
+                            border-radius: 5px;
+                            border: 1px solid #e0e0e0;
+                            text-align: left;
+                        """)
+            pseudocode_label2.setAlignment(Qt.AlignLeft)
+            self.detail_content_layout.addWidget(pseudocode_label2)
+
+            # Add spacing between code blocks
+            self.detail_content_layout.addItem(QSpacerItem(20, 15, QSizePolicy.Minimum, QSizePolicy.Fixed))
+
+            # # Create title label for Selection Sort
+            # ss_title = QLabel("Selection Sort:")
+            # ss_title.setStyleSheet("font-weight: bold; font-size: 14px; margin-top: 10px;")
+            # ss_title.setAlignment(Qt.AlignLeft)
+            # self.detail_content_layout.addWidget(ss_title)
+
+            # Create pseudocode label for Selection Sort
+            pseudocode_label3 = QLabel()
+            pseudocode_label3.setObjectName("pseudocode_label3")
+            pseudocode_label3.setText("""sum_roll_probability(target_roll, dice):
+    target_sum = sum(target_roll)
+
+    total_outcomes = 1
+    for die in dice:
+        total_outcomes *= die.num_sides
+
+    successful_outcomes = 0
+
+    def count_successful(current_roll, index):
+        nonlocal successful_outcomes
+        if index == len(dice):
+            if sum(current_roll) == target_sum:
+                successful_outcomes += 1
+            return
+        for face in range(1, dice[index].num_sides + 1):
+            count_successful(current_roll + [face], index + 1)
+
+    count_successful([], 0)
+
+    return successful_outcomes / total_outcomes""")
+            pseudocode_label3.setFont(QFont("Courier New", 10))
+            pseudocode_label3.setStyleSheet("""
+                            background-color: #f5f5f5;
+                            padding: 15px;
+                            border-radius: 5px;
+                            border: 1px solid #e0e0e0;
+                            text-align: left;
+                        """)
+            pseudocode_label3.setAlignment(Qt.AlignLeft)
+            self.detail_content_layout.addWidget(pseudocode_label3)
+
         # Special case for Sorting/Searching to include pseudocode
         elif sim["name"] == "Sorting/Searching":
             # Create a gap before pseudocode
@@ -505,8 +606,7 @@ visit(location, path):
         elif sim["name"] == "Graph Manipulation":
             # Extend the description
             self.detail_description.setText(
-                sim["description"] +
-                "\n\nPseudocode for building adjacency list and matrix:"
+                sim["description"]
             )
 
             # Spacer before pseudocode
@@ -574,8 +674,7 @@ visit(location, path):
         elif sim["name"] == "Set Theory":
             # Extend the description
             self.detail_description.setText(
-                sim["description"] +
-                "\n\nPseudocode for basic set operations:"
+                sim["description"]
             )
 
             # Spacer before pseudocode
