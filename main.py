@@ -102,7 +102,7 @@ class PygameQtApp(QMainWindow):
             {
                 "name": "MazeRunner",
                 "external": "maze.py",
-                "description": "Solve a maze by using the breadth-first or depth-first searches on the tree representation of the maze",
+                "description": "Solve a maze by using the breadth-first or depth-first searches on the tree representation of the maze.",
                 "color": "#4CAF50"  # Green
             },
             {
@@ -888,14 +888,18 @@ class PygameQtApp(QMainWindow):
         # Add pseudocode
         pseudocode_label = QLabel()
         pseudocode_label.setObjectName("pseudocode_label")
-        pseudocode_label.setText("""DFS(Maze):
+        pseudocode_label.setText("""def DFS(Maze):
         path = []
-        visit(start_node, path)
-    visit(location, path):
-        if location == destination
-            path.append(location)
-            return True
-        for each adjacent node neighbor
+        visited_nodes = {}
+        visit(start_node, path, visited_nodes)
+        return path
+def visit(location, path, visited_nodes):
+    visited_nodes.add(location)
+    if location == destination
+        path.append(location)
+        return True
+    for each adjacent node neighbor
+        if neighbor not in visited_nodes
             if visit(neighbor, path)
                 path.append(location)
                 return True""")
