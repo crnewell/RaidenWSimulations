@@ -396,15 +396,14 @@ visit(location, path):
         
         # Special case for Sorting/Searching to include pseudocode
         elif sim["name"] == "Sorting/Searching":
-            self.detail_description.setText(sim["description"])
             # Create a gap before pseudocode
             self.detail_content_layout.addItem(QSpacerItem(60, 20, QSizePolicy.Minimum, QSizePolicy.Fixed))
             
-            # Create title label for Binary Search
-            bs_title = QLabel("Binary Search:")
-            bs_title.setStyleSheet("font-weight: bold; font-size: 14px; margin-top: 10px;")
-            bs_title.setAlignment(Qt.AlignLeft)
-            self.detail_content_layout.addWidget(bs_title)
+            # # Create title label for Binary Search
+            # bs_title = QLabel("Binary Search:")
+            # bs_title.setStyleSheet("font-weight: bold; font-size: 14px; margin-top: 10px;")
+            # bs_title.setAlignment(Qt.AlignLeft)
+            # self.detail_content_layout.addWidget(bs_title)
             
             # Create pseudocode label for Binary Search
             pseudocode_label = QLabel()
@@ -435,11 +434,11 @@ visit(location, path):
             # Add spacing between code blocks
             self.detail_content_layout.addItem(QSpacerItem(20, 15, QSizePolicy.Minimum, QSizePolicy.Fixed))
             
-            # Create title label for Insertion Sort
-            is_title = QLabel("Insertion Sort:")
-            is_title.setStyleSheet("font-weight: bold; font-size: 14px; margin-top: 10px;")
-            is_title.setAlignment(Qt.AlignLeft)
-            self.detail_content_layout.addWidget(is_title)
+            # # Create title label for Insertion Sort
+            # is_title = QLabel("Insertion Sort:")
+            # is_title.setStyleSheet("font-weight: bold; font-size: 14px; margin-top: 10px;")
+            # is_title.setAlignment(Qt.AlignLeft)
+            # self.detail_content_layout.addWidget(is_title)
             
             # Create pseudocode label for Insertion Sort
             pseudocode_label2 = QLabel()
@@ -467,11 +466,11 @@ visit(location, path):
             # Add spacing between code blocks
             self.detail_content_layout.addItem(QSpacerItem(20, 15, QSizePolicy.Minimum, QSizePolicy.Fixed))
             
-            # Create title label for Selection Sort
-            ss_title = QLabel("Selection Sort:")
-            ss_title.setStyleSheet("font-weight: bold; font-size: 14px; margin-top: 10px;")
-            ss_title.setAlignment(Qt.AlignLeft)
-            self.detail_content_layout.addWidget(ss_title)
+            # # Create title label for Selection Sort
+            # ss_title = QLabel("Selection Sort:")
+            # ss_title.setStyleSheet("font-weight: bold; font-size: 14px; margin-top: 10px;")
+            # ss_title.setAlignment(Qt.AlignLeft)
+            # self.detail_content_layout.addWidget(ss_title)
             
             # Create pseudocode label for Selection Sort
             pseudocode_label3 = QLabel()
