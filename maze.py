@@ -160,8 +160,8 @@ for i in range(GRID_SIZE):
                 neighbor_count[i][j] += 1
 
 # printing neighbor_count out
-for row in neighbor_count:
-    print(row)
+# for row in neighbor_count:
+#     print(row)
 
 # starting position
 player_pos = [0, 1]
@@ -228,7 +228,7 @@ def add_node(xpos: int, ypos: int, new_Node: bool, parent=None):
         raise ValueError("do not have a parent or permission to create a parent wihtin add_node")
     # add the correct node to the dictionary
     node_map[(xpos, ypos)] = parent
-    print("added node with color", tile_map[(xpos, ypos)].color, "at location ", xpos, ", ", ypos)
+    # print("added node with color", tile_map[(xpos, ypos)].color, "at location ", xpos, ", ", ypos)
 
     # if the current cell has more than 2 neighbors, then it's children will get new nodes in the tree
     new_node_child = neighbor_count[xpos][ypos] > 2
@@ -583,8 +583,8 @@ while running:
                 in_exploration_phase = True
                 current_algorithm = "BFS"
                 move_direction = None
-                print("BFS Solution path:", solution_path)
-                print(f"BFS exploration: {len(exploration_history)} steps")
+                # print("BFS Solution path:", solution_path)
+                # print(f"BFS exploration: {len(exploration_history)} steps")
             elif button_hover_dfs:
                 # Reset and start DFS exploration
                 player_pos = original_player_pos.copy()
@@ -598,10 +598,10 @@ while running:
                 in_exploration_phase = True
                 current_algorithm = "DFS"
                 move_direction = None
-                print("DFS Solution path:", solution_path)
-                print(f"DFS exploration: {len(exploration_history)} steps")
+                # print("DFS Solution path:", solution_path)
+                # print(f"DFS exploration: {len(exploration_history)} steps")
             elif button_hover_reset:
-                print("MAZE RESET PRESSED")
+                # print("MAZE RESET PRESSED")
                 # Reset 
                 player_pos = original_player_pos.copy()
                 solving_active = False
@@ -614,12 +614,11 @@ while running:
                 solution_paused = False
             elif button_hover_pause:
                 #pause the exploration
-                print("SOLUTION PAUSE PRESSED")
+                # print("SOLUTION PAUSE PRESSED")
                 solution_paused = not solution_paused
                 move_direction = None
             elif button_hover_step:
-                print("SOLUTION STEP PRESSED")
-                #TODO: step the solution by one.
+                # print("SOLUTION STEP PRESSED")
                 move_direction = None
                 if solution_paused:
                     solution_step = True
