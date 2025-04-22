@@ -370,6 +370,7 @@ visit(location, path):
         return True
     for each adjacent node neighbor
         if visit(neighbor, path)
+            path.append(location)
             return True""")
             pseudocode_label.setFont(QFont("Courier New", 10))
             pseudocode_label.setStyleSheet("""
