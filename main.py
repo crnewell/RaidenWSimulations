@@ -313,7 +313,9 @@ class PygameQtApp(QMainWindow):
         # Remove any existing pseudocode label if it exists
         for i in reversed(range(self.detail_content_layout.count())):
             widget = self.detail_content_layout.itemAt(i).widget()
-            if widget is not None and widget.objectName() == "pseudocode_label":
+            if widget is not None and (widget.objectName() == "pseudocode_label" or 
+                                    widget.objectName() == "pseudocode_label2" or
+                                    widget.objectName() == "pseudocode_label3"):
                 widget.deleteLater()
         
         # Special case for MazeRunner to include pseudocode
@@ -326,15 +328,15 @@ class PygameQtApp(QMainWindow):
             pseudocode_label = QLabel()
             pseudocode_label.setObjectName("pseudocode_label")
             pseudocode_label.setText("""DFS(Maze):
-        path = []
-        visit(start_node, path)
-    visit(location, path):
-        if location == destination
-            path.append(location)
-            return True
-        for each adjacent node neighbor
-            if visit(neighbor, path)
-                return True""")
+    path = []
+    visit(start_node, path)
+visit(location, path):
+    if location == destination
+        path.append(location)
+        return True
+    for each adjacent node neighbor
+        if visit(neighbor, path)
+            return True""")
             pseudocode_label.setFont(QFont("Courier New", 10))
             pseudocode_label.setStyleSheet("""
                 background-color: #f5f5f5;
@@ -357,6 +359,108 @@ class PygameQtApp(QMainWindow):
             else:
                 # Fallback if spacer not found
                 self.detail_content_layout.addWidget(pseudocode_label)
+        
+        # Special case for Sorting/Searching to include pseudocode
+        elif sim["name"] == "Sorting/Searching":
+            self.detail_description.setText(sim["description"])
+            # Create a gap before pseudocode
+            self.detail_content_layout.addItem(QSpacerItem(60, 20, QSizePolicy.Minimum, QSizePolicy.Fixed))
+            
+            # Create title label for Binary Search
+            bs_title = QLabel("Binary Search:")
+            bs_title.setStyleSheet("font-weight: bold; font-size: 14px; margin-top: 10px;")
+            bs_title.setAlignment(Qt.AlignLeft)
+            self.detail_content_layout.addWidget(bs_title)
+            
+            # Create pseudocode label for Binary Search
+            pseudocode_label = QLabel()
+            pseudocode_label.setObjectName("pseudocode_label")
+            pseudocode_label.setText("""binary_search(list, target):
+    left = 0
+    right = length(list) - 1
+    while left <= right:
+        mid = (left + right) // 2
+        if list[mid] == target:
+            return mid
+        elif list[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return -1""")
+            pseudocode_label.setFont(QFont("Courier New", 10))
+            pseudocode_label.setStyleSheet("""
+                background-color: #f5f5f5;
+                padding: 15px;
+                border-radius: 5px;
+                border: 1px solid #e0e0e0;
+                text-align: left;
+            """)
+            pseudocode_label.setAlignment(Qt.AlignLeft)
+            self.detail_content_layout.addWidget(pseudocode_label)
+            
+            # Add spacing between code blocks
+            self.detail_content_layout.addItem(QSpacerItem(20, 15, QSizePolicy.Minimum, QSizePolicy.Fixed))
+            
+            # Create title label for Insertion Sort
+            is_title = QLabel("Insertion Sort:")
+            is_title.setStyleSheet("font-weight: bold; font-size: 14px; margin-top: 10px;")
+            is_title.setAlignment(Qt.AlignLeft)
+            self.detail_content_layout.addWidget(is_title)
+            
+            # Create pseudocode label for Insertion Sort
+            pseudocode_label2 = QLabel()
+            pseudocode_label2.setObjectName("pseudocode_label2")
+            pseudocode_label2.setText("""insertion_sort(array):
+    for i from 1 to length(array) - 1:
+        key = array[i]
+        j = i - 1
+        while j >= 0 and array[j] > key:
+            array[j + 1] = array[j]
+            j = j - 1
+        array[j + 1] = key
+    return array""")
+            pseudocode_label2.setFont(QFont("Courier New", 10))
+            pseudocode_label2.setStyleSheet("""
+                background-color: #f5f5f5;
+                padding: 15px;
+                border-radius: 5px;
+                border: 1px solid #e0e0e0;
+                text-align: left;
+            """)
+            pseudocode_label2.setAlignment(Qt.AlignLeft)
+            self.detail_content_layout.addWidget(pseudocode_label2)
+            
+            # Add spacing between code blocks
+            self.detail_content_layout.addItem(QSpacerItem(20, 15, QSizePolicy.Minimum, QSizePolicy.Fixed))
+            
+            # Create title label for Selection Sort
+            ss_title = QLabel("Selection Sort:")
+            ss_title.setStyleSheet("font-weight: bold; font-size: 14px; margin-top: 10px;")
+            ss_title.setAlignment(Qt.AlignLeft)
+            self.detail_content_layout.addWidget(ss_title)
+            
+            # Create pseudocode label for Selection Sort
+            pseudocode_label3 = QLabel()
+            pseudocode_label3.setObjectName("pseudocode_label3")
+            pseudocode_label3.setText("""selection_sort(array):
+    for i from 0 to length(array) - 1:
+        min_index = i
+        for j from i + 1 to length(array) - 1:
+            if array[j] < array[min_index]:
+                min_index = j
+        if min_index != i:
+            swap array[i] and array[min_index]
+    return array""")
+            pseudocode_label3.setFont(QFont("Courier New", 10))
+            pseudocode_label3.setStyleSheet("""
+                background-color: #f5f5f5;
+                padding: 15px;
+                border-radius: 5px;
+                border: 1px solid #e0e0e0;
+                text-align: left;
+            """)
+            pseudocode_label3.setAlignment(Qt.AlignLeft)
+            self.detail_content_layout.addWidget(pseudocode_label3)
         
         self.launch_button.setStyleSheet(f"""
             QPushButton {{
