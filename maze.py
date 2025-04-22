@@ -57,7 +57,7 @@ BUTTON_TEXT_DFS = "Solve DFS"
 BUTTON_TEXT_RESET = "Reset Maze"
 BUTTON_TEXT_PAUSE = "Pause/Play Solve"
 BUTTON_TEXT_STEP = "Step Solve"
-DFS_STACK_TEXT = "DFS()"
+DFS_STACK_TEXT = "visit()"
 small_font = pygame.font.SysFont('Arial', 20)
 
 
