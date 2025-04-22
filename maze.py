@@ -583,6 +583,8 @@ while running:
                 in_exploration_phase = True
                 current_algorithm = "BFS"
                 move_direction = None
+                solution_paused = False
+
                 # print("BFS Solution path:", solution_path)
                 # print(f"BFS exploration: {len(exploration_history)} steps")
             elif button_hover_dfs:
@@ -598,6 +600,8 @@ while running:
                 in_exploration_phase = True
                 current_algorithm = "DFS"
                 move_direction = None
+                solution_paused = False
+
                 # print("DFS Solution path:", solution_path)
                 # print(f"DFS exploration: {len(exploration_history)} steps")
             elif button_hover_reset:
