@@ -336,6 +336,481 @@ class PygameQtApp(QMainWindow):
             # Add to grid
             self.content_layout.addWidget(card, row, col)
 
+#     def show_detail_screen(self, sim_index):
+#         # Show the detail screen for a specific visualization
+#         self.current_visualization = sim_index
+#         sim = self.simulations[sim_index]
+#
+#         self.detail_title.setText(sim["name"])
+#         self.detail_description.setText(sim["description"])
+#
+#         # Remove any existing pseudocode label if it exists
+#         for i in reversed(range(self.detail_content_layout.count())):
+#             widget = self.detail_content_layout.itemAt(i).widget()
+#             if widget is not None and (widget.objectName() == "pseudocode_label" or
+#                                     widget.objectName() == "pseudocode_label2" or
+#                                     widget.objectName() == "pseudocode_label3" or
+#                                     widget.objectName() == "pseudocode_adjlist" or
+#                                     widget.objectName() == "pseudocode_adjmatrix" or
+#                                     widget.objectName() == "pseudocode_union" or
+#                                     widget.objectName() == "pseudocode_intersection" or
+#                                     widget.objectName() == "pseudocode_difference" or
+#                                     widget.objectName() == "pseudocode_symdifference"):
+#                 widget.deleteLater()
+#
+#         # Special case for MazeRunner to include pseudocode
+#         if sim["name"] == "MazeRunner":
+#             self.detail_description.setText(sim["description"] + "\n How might you change the algorithm if the maze had loops?")
+#             # Create a gap before pseudocode
+#             self.detail_content_layout.addItem(QSpacerItem(60, 30, QSizePolicy.Minimum, QSizePolicy.Fixed))
+#
+#             # Create pseudocode label
+#             pseudocode_label = QLabel()
+#             pseudocode_label.setObjectName("pseudocode_label")
+#             pseudocode_label.setText("""DFS(Maze):
+#     path = []
+#     visit(start_node, path)
+# visit(location, path):
+#     if location == destination
+#         path.append(location)
+#         return True
+#     for each adjacent node neighbor
+#         if visit(neighbor, path)
+#             path.append(location)
+#             return True""")
+#             pseudocode_label.setFont(QFont("Courier New", 10))
+#             pseudocode_label.setStyleSheet("""
+#                 background-color: #f5f5f5;
+#                 padding: 15px;
+#                 border-radius: 5px;
+#                 border: 1px solid #e0e0e0;
+#                 text-align: left;
+#             """)
+#             pseudocode_label.setAlignment(Qt.AlignLeft)
+#
+#             # Insert pseudocode label before the spacer that comes before the launch button
+#             spacer_index = -1
+#             for i in range(self.detail_content_layout.count()):
+#                 if isinstance(self.detail_content_layout.itemAt(i), QSpacerItem):
+#                     spacer_index = i
+#                     break
+#
+#             if spacer_index != -1:
+#                 self.detail_content_layout.insertWidget(spacer_index, pseudocode_label)
+#             else:
+#                 # Fallback if spacer not found
+#                 self.detail_content_layout.addWidget(pseudocode_label)
+#
+#
+#         elif sim["name"] == "Probability":
+#             self.detail_content_layout.addItem(QSpacerItem(60, 20, QSizePolicy.Minimum, QSizePolicy.Fixed))
+#
+#             # Create pseudocode label for Exact Roll Probability
+#             pseudocode_label = QLabel()
+#             pseudocode_label.setObjectName("pseudocode_label")
+#             pseudocode_label.setText("""exact_roll_probability():
+#                 probability = 1
+#                 for die in dice:
+#                     probability *= (1 / die.num_sides)
+#                 return probability
+#                 """)
+#             pseudocode_label.setFont(QFont("Courier New", 10))
+#             pseudocode_label.setStyleSheet("""
+#                             background-color: #f5f5f5;
+#                             padding: 15px;
+#                             border-radius: 5px;
+#                             border: 1px solid #e0e0e0;
+#                             text-align: left;
+#                         """)
+#             pseudocode_label.setAlignment(Qt.AlignLeft)
+#             self.detail_content_layout.addWidget(pseudocode_label)
+#
+#             # Add spacing between code blocks
+#             self.detail_content_layout.addItem(QSpacerItem(20, 15, QSizePolicy.Minimum, QSizePolicy.Fixed))
+#
+#             # Create pseudocode label for Insertion Sort
+#             pseudocode_label2 = QLabel()
+#             pseudocode_label2.setObjectName("pseudocode_label2")
+#             pseudocode_label2.setText("""unordered_roll_probability(target_roll, dice):
+#     value_counts = {}
+#     for value in target_roll:
+#         if value not in value_counts:
+#             value_counts[value] = 0
+#         value_counts[value] += 1
+#
+#     num_permutations = factorial(len(target_roll))
+#     for count in value_counts.values():
+#         num_permutations /= factorial(count)
+#
+#     probability = 1
+#     for i in range(len(target_roll)):
+#         probability *= (1 / dice[i].num_sides)
+#
+#     return probability * num_permutations""")
+#             pseudocode_label2.setFont(QFont("Courier New", 10))
+#             pseudocode_label2.setStyleSheet("""
+#                             background-color: #f5f5f5;
+#                             padding: 15px;
+#                             border-radius: 5px;
+#                             border: 1px solid #e0e0e0;
+#                             text-align: left;
+#                         """)
+#             pseudocode_label2.setAlignment(Qt.AlignLeft)
+#             self.detail_content_layout.addWidget(pseudocode_label2)
+#
+#             # Add spacing between code blocks
+#             self.detail_content_layout.addItem(QSpacerItem(20, 15, QSizePolicy.Minimum, QSizePolicy.Fixed))
+#
+#             # # Create title label for Selection Sort
+#             # ss_title = QLabel("Selection Sort:")
+#             # ss_title.setStyleSheet("font-weight: bold; font-size: 14px; margin-top: 10px;")
+#             # ss_title.setAlignment(Qt.AlignLeft)
+#             # self.detail_content_layout.addWidget(ss_title)
+#
+#             # Create pseudocode label for Selection Sort
+#             pseudocode_label3 = QLabel()
+#             pseudocode_label3.setObjectName("pseudocode_label3")
+#             pseudocode_label3.setText("""sum_roll_probability(target_roll, dice):
+#     target_sum = sum(target_roll)
+#
+#     total_outcomes = 1
+#     for die in dice:
+#         total_outcomes *= die.num_sides
+#
+#     successful_outcomes = 0
+#
+#     def count_successful(current_roll, index):
+#         nonlocal successful_outcomes
+#         if index == len(dice):
+#             if sum(current_roll) == target_sum:
+#                 successful_outcomes += 1
+#             return
+#         for face in range(1, dice[index].num_sides + 1):
+#             count_successful(current_roll + [face], index + 1)
+#
+#     count_successful([], 0)
+#
+#     return successful_outcomes / total_outcomes""")
+#             pseudocode_label3.setFont(QFont("Courier New", 10))
+#             pseudocode_label3.setStyleSheet("""
+#                             background-color: #f5f5f5;
+#                             padding: 15px;
+#                             border-radius: 5px;
+#                             border: 1px solid #e0e0e0;
+#                             text-align: left;
+#                         """)
+#             pseudocode_label3.setAlignment(Qt.AlignLeft)
+#             self.detail_content_layout.addWidget(pseudocode_label3)
+#
+#         # Special case for Sorting/Searching to include pseudocode
+#         elif sim["name"] == "Sorting/Searching":
+#             # Create a gap before pseudocode
+#             self.detail_content_layout.addItem(QSpacerItem(60, 20, QSizePolicy.Minimum, QSizePolicy.Fixed))
+#
+#             # # Create title label for Binary Search
+#             # bs_title = QLabel("Binary Search:")
+#             # bs_title.setStyleSheet("font-weight: bold; font-size: 14px; margin-top: 10px;")
+#             # bs_title.setAlignment(Qt.AlignLeft)
+#             # self.detail_content_layout.addWidget(bs_title)
+#
+#             # Create pseudocode label for Binary Search
+#             pseudocode_label = QLabel()
+#             pseudocode_label.setObjectName("pseudocode_label")
+#             pseudocode_label.setText("""binary_search(list, target):
+#     left = 0
+#     right = length(list) - 1
+#     while left <= right:
+#         mid = (left + right) // 2
+#         if list[mid] == target:
+#             return mid
+#         elif list[mid] < target:
+#             left = mid + 1
+#         else:
+#             right = mid - 1
+#     return -1""")
+#             pseudocode_label.setFont(QFont("Courier New", 10))
+#             pseudocode_label.setStyleSheet("""
+#                 background-color: #f5f5f5;
+#                 padding: 15px;
+#                 border-radius: 5px;
+#                 border: 1px solid #e0e0e0;
+#                 text-align: left;
+#             """)
+#             pseudocode_label.setAlignment(Qt.AlignLeft)
+#             self.detail_content_layout.addWidget(pseudocode_label)
+#
+#             # Add spacing between code blocks
+#             self.detail_content_layout.addItem(QSpacerItem(20, 15, QSizePolicy.Minimum, QSizePolicy.Fixed))
+#
+#             # # Create title label for Insertion Sort
+#             # is_title = QLabel("Insertion Sort:")
+#             # is_title.setStyleSheet("font-weight: bold; font-size: 14px; margin-top: 10px;")
+#             # is_title.setAlignment(Qt.AlignLeft)
+#             # self.detail_content_layout.addWidget(is_title)
+#
+#             # Create pseudocode label for Insertion Sort
+#             pseudocode_label2 = QLabel()
+#             pseudocode_label2.setObjectName("pseudocode_label2")
+#             pseudocode_label2.setText("""insertion_sort(array):
+#     for i from 1 to length(array) - 1:
+#         key = array[i]
+#         j = i - 1
+#         while j >= 0 and array[j] > key:
+#             array[j + 1] = array[j]
+#             j = j - 1
+#         array[j + 1] = key
+#     return array""")
+#             pseudocode_label2.setFont(QFont("Courier New", 10))
+#             pseudocode_label2.setStyleSheet("""
+#                 background-color: #f5f5f5;
+#                 padding: 15px;
+#                 border-radius: 5px;
+#                 border: 1px solid #e0e0e0;
+#                 text-align: left;
+#             """)
+#             pseudocode_label2.setAlignment(Qt.AlignLeft)
+#             self.detail_content_layout.addWidget(pseudocode_label2)
+#
+#             # Add spacing between code blocks
+#             self.detail_content_layout.addItem(QSpacerItem(20, 15, QSizePolicy.Minimum, QSizePolicy.Fixed))
+#
+#             # # Create title label for Selection Sort
+#             # ss_title = QLabel("Selection Sort:")
+#             # ss_title.setStyleSheet("font-weight: bold; font-size: 14px; margin-top: 10px;")
+#             # ss_title.setAlignment(Qt.AlignLeft)
+#             # self.detail_content_layout.addWidget(ss_title)
+#
+#             # Create pseudocode label for Selection Sort
+#             pseudocode_label3 = QLabel()
+#             pseudocode_label3.setObjectName("pseudocode_label3")
+#             pseudocode_label3.setText("""selection_sort(array):
+#     for i from 0 to length(array) - 1:
+#         min_index = i
+#         for j from i + 1 to length(array) - 1:
+#             if array[j] < array[min_index]:
+#                 min_index = j
+#         if min_index != i:
+#             swap array[i] and array[min_index]
+#     return array""")
+#             pseudocode_label3.setFont(QFont("Courier New", 10))
+#             pseudocode_label3.setStyleSheet("""
+#                 background-color: #f5f5f5;
+#                 padding: 15px;
+#                 border-radius: 5px;
+#                 border: 1px solid #e0e0e0;
+#                 text-align: left;
+#             """)
+#             pseudocode_label3.setAlignment(Qt.AlignLeft)
+#             self.detail_content_layout.addWidget(pseudocode_label3)
+#
+#         elif sim["name"] == "Graph Manipulation":
+#             # Extend the description
+#             self.detail_description.setText(
+#                 sim["description"]
+#             )
+#
+#             # Spacer before pseudocode
+#             self.detail_content_layout.addItem(
+#                 QSpacerItem(0, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
+#             )
+#
+#             # Adjacency List Pseudocode
+#             pnl = QLabel()
+#             pnl.setObjectName("pseudocode_adjlist")
+#             pnl.setText(
+#                 "def build_adjacency_list(graph):\n"
+#                 "    # initialize empty list for each node\n"
+#                 "    adjacency = { node: [] for node in graph.nodes() }\n"
+#                 "    # populate edges\n"
+#                 "    for u, v in graph.edges():\n"
+#                 "        adjacency[u].append(v)\n"
+#                 "        adjacency[v].append(u)  # if undirected\n"
+#                 "    return adjacency"
+#             )
+#             pnl.setFont(QFont("Courier New", 10))
+#             pnl.setStyleSheet(
+#                 "background-color: #f5f5f5;"
+#                 "padding: 10px;"
+#                 "border-radius: 4px;"
+#                 "border: 1px solid #ddd;"
+#             )
+#             pnl.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+#             self.detail_content_layout.addWidget(pnl)
+#
+#             # Small spacer between code blocks
+#             self.detail_content_layout.addItem(
+#                 QSpacerItem(0, 15, QSizePolicy.Minimum, QSizePolicy.Fixed)
+#             )
+#
+#             # Adjacency Matrix Pseudocode
+#             pmx = QLabel()
+#             pmx.setObjectName("pseudocode_adjmatrix")
+#             pmx.setText(
+#                 "def build_adjacency_matrix(graph):\n"
+#                 "    n = graph.number_of_nodes()\n"
+#                 "    # create n×n zero matrix\n"
+#                 "    matrix = [[0]*n for _ in range(n)]\n"
+#                 "    # fill in edges\n"
+#                 "    for u, v in graph.edges():\n"
+#                 "        matrix[u][v] = 1\n"
+#                 "        matrix[v][u] = 1  # if undirected\n"
+#                 "    return matrix"
+#             )
+#             pmx.setFont(QFont("Courier New", 10))
+#             pmx.setStyleSheet(
+#                 "background-color: #f5f5f5;"
+#                 "padding: 10px;"
+#                 "border-radius: 4px;"
+#                 "border: 1px solid #ddd;"
+#             )
+#             pmx.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+#             self.detail_content_layout.addWidget(pmx)
+#
+#             # Spacer before launching external visualization
+#             self.detail_content_layout.addItem(
+#                 QSpacerItem(0, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
+#             )
+#
+#         elif sim["name"] == "Set Theory":
+#             # Extend the description
+#             self.detail_description.setText(
+#                 sim["description"]
+#             )
+#
+#             # Spacer before pseudocode
+#             self.detail_content_layout.addItem(
+#                 QSpacerItem(0, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
+#             )
+#
+#             # Union Pseudocode
+#             pu = QLabel()
+#             pu.setObjectName("pseudocode_union")
+#             pu.setText(
+#                 "def union(A, B):\n"
+#                 "    # return a new set containing all elements in A or B\n"
+#                 "    result = set()\n"
+#                 "    for x in A:\n"
+#                 "        result.add(x)\n"
+#                 "    for x in B:\n"
+#                 "        result.add(x)\n"
+#                 "    return result"
+#             )
+#             pu.setFont(QFont("Courier New", 10))
+#             pu.setStyleSheet(
+#                 "background-color: #f5f5f5;"
+#                 "padding: 10px;"
+#                 "border-radius: 4px;"
+#                 "border: 1px solid #ddd;"
+#             )
+#             pu.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+#             self.detail_content_layout.addWidget(pu)
+#
+#             # Spacer
+#             self.detail_content_layout.addItem(
+#                 QSpacerItem(0, 15, QSizePolicy.Minimum, QSizePolicy.Fixed)
+#             )
+#
+#             # Intersection Pseudocode
+#             pi = QLabel()
+#             pi.setObjectName("pseudocode_intersection")
+#             pi.setText(
+#                 "def intersection(A, B):\n"
+#                 "    # return a new set containing elements in both A and B\n"
+#                 "    result = set()\n"
+#                 "    for x in A:\n"
+#                 "        if x in B:\n"
+#                 "            result.add(x)\n"
+#                 "    return result"
+#             )
+#             pi.setFont(QFont("Courier New", 10))
+#             pi.setStyleSheet(
+#                 "background-color: #f5f5f5;"
+#                 "padding: 10px;"
+#                 "border-radius: 4px;"
+#                 "border: 1px solid #ddd;"
+#             )
+#             pi.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+#             self.detail_content_layout.addWidget(pi)
+#
+#             # Spacer
+#             self.detail_content_layout.addItem(
+#                 QSpacerItem(0, 15, QSizePolicy.Minimum, QSizePolicy.Fixed)
+#             )
+#
+#             # Difference Pseudocode
+#             pd = QLabel()
+#             pd.setObjectName("pseudocode_difference")
+#             pd.setText(
+#                 "def difference(A, B):\n"
+#                 "    # return elements in A that are not in B\n"
+#                 "    result = set()\n"
+#                 "    for x in A:\n"
+#                 "        if x not in B:\n"
+#                 "            result.add(x)\n"
+#                 "    return result"
+#             )
+#             pd.setFont(QFont("Courier New", 10))
+#             pd.setStyleSheet(
+#                 "background-color: #f5f5f5;"
+#                 "padding: 10px;"
+#                 "border-radius: 4px;"
+#                 "border: 1px solid #ddd;"
+#             )
+#             pd.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+#             self.detail_content_layout.addWidget(pd)
+#
+#             # Spacer
+#             self.detail_content_layout.addItem(
+#                 QSpacerItem(0, 15, QSizePolicy.Minimum, QSizePolicy.Fixed)
+#             )
+#
+#             # Symmetric Difference Pseudocode
+#             ps = QLabel()
+#             ps.setObjectName("pseudocode_symdifference")
+#             ps.setText(
+#                 "def symmetric_difference(A, B):\n"
+#                 "    # return elements in A or B but not both\n"
+#                 "    result = set()\n"
+#                 "    for x in A:\n"
+#                 "        if x not in B:\n"
+#                 "            result.add(x)\n"
+#                 "    for x in B:\n"
+#                 "        if x not in A:\n"
+#                 "            result.add(x)\n"
+#                 "    return result"
+#             )
+#             ps.setFont(QFont("Courier New", 10))
+#             ps.setStyleSheet(
+#                 "background-color: #f5f5f5;"
+#                 "padding: 10px;"
+#                 "border-radius: 4px;"
+#                 "border: 1px solid #ddd;"
+#             )
+#             ps.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+#             self.detail_content_layout.addWidget(ps)
+#
+#             # Spacer before launch button
+#             self.detail_content_layout.addItem(
+#                 QSpacerItem(0, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
+#             )
+#
+#
+#         self.launch_button.setStyleSheet(f"""
+#             QPushButton {{
+#                 background-color: {sim['color']};
+#                 color: white;
+#                 font-size: 18px;
+#                 padding: 15px 32px;
+#                 border-radius: 10px;
+#                 min-width: 250px;
+#             }}
+#             QPushButton:hover {{
+#                 background-color: {self.darken_color(sim['color'])};
+#             }}
+#         """)
+#
+#         self.home_widget.hide()
+#         self.detail_widget.show()
     def show_detail_screen(self, sim_index):
         # Show the detail screen for a specific visualization
         self.current_visualization = sim_index
@@ -343,458 +818,23 @@ class PygameQtApp(QMainWindow):
 
         self.detail_title.setText(sim["name"])
         self.detail_description.setText(sim["description"])
-        
-        # Remove any existing pseudocode label if it exists
-        for i in reversed(range(self.detail_content_layout.count())):
-            widget = self.detail_content_layout.itemAt(i).widget()
-            if widget is not None and (widget.objectName() == "pseudocode_label" or 
-                                    widget.objectName() == "pseudocode_label2" or
-                                    widget.objectName() == "pseudocode_label3" or
-                                    widget.objectName() == "pseudocode_adjlist" or
-                                    widget.objectName() == "pseudocode_adjmatrix" or
-                                    widget.objectName() == "pseudocode_union" or
-                                    widget.objectName() == "pseudocode_intersection" or
-                                    widget.objectName() == "pseudocode_difference" or
-                                    widget.objectName() == "pseudocode_symdifference"):
-                widget.deleteLater()
-        
-        # Special case for MazeRunner to include pseudocode
+
+        # First, clear all dynamic content from previous views
+        self.clear_dynamic_content()
+
+        # Now add the specific content for this visualization
         if sim["name"] == "MazeRunner":
-            self.detail_description.setText(sim["description"] + "\n How might you change the algorithm if the maze had loops?")
-            # Create a gap before pseudocode
-            self.detail_content_layout.addItem(QSpacerItem(60, 30, QSizePolicy.Minimum, QSizePolicy.Fixed))
-            
-            # Create pseudocode label
-            pseudocode_label = QLabel()
-            pseudocode_label.setObjectName("pseudocode_label")
-            pseudocode_label.setText("""DFS(Maze):
-    path = []
-    visit(start_node, path)
-visit(location, path):
-    if location == destination
-        path.append(location)
-        return True
-    for each adjacent node neighbor
-        if visit(neighbor, path)
-            path.append(location)
-            return True""")
-            pseudocode_label.setFont(QFont("Courier New", 10))
-            pseudocode_label.setStyleSheet("""
-                background-color: #f5f5f5;
-                padding: 15px;
-                border-radius: 5px;
-                border: 1px solid #e0e0e0;
-                text-align: left;
-            """)
-            pseudocode_label.setAlignment(Qt.AlignLeft)
-            
-            # Insert pseudocode label before the spacer that comes before the launch button
-            spacer_index = -1
-            for i in range(self.detail_content_layout.count()):
-                if isinstance(self.detail_content_layout.itemAt(i), QSpacerItem):
-                    spacer_index = i
-                    break
-            
-            if spacer_index != -1:
-                self.detail_content_layout.insertWidget(spacer_index, pseudocode_label)
-            else:
-                # Fallback if spacer not found
-                self.detail_content_layout.addWidget(pseudocode_label)
-
-
+            self.add_mazerunner_content(sim)
         elif sim["name"] == "Probability":
-            self.detail_content_layout.addItem(QSpacerItem(60, 20, QSizePolicy.Minimum, QSizePolicy.Fixed))
-
-            # Create pseudocode label for Exact Roll Probability
-            pseudocode_label = QLabel()
-            pseudocode_label.setObjectName("pseudocode_label")
-            pseudocode_label.setText("""exact_roll_probability():
-                probability = 1
-                for die in dice:
-                    probability *= (1 / die.num_sides)
-                return probability
-                """)
-            pseudocode_label.setFont(QFont("Courier New", 10))
-            pseudocode_label.setStyleSheet("""
-                            background-color: #f5f5f5;
-                            padding: 15px;
-                            border-radius: 5px;
-                            border: 1px solid #e0e0e0;
-                            text-align: left;
-                        """)
-            pseudocode_label.setAlignment(Qt.AlignLeft)
-            self.detail_content_layout.addWidget(pseudocode_label)
-
-            # Add spacing between code blocks
-            self.detail_content_layout.addItem(QSpacerItem(20, 15, QSizePolicy.Minimum, QSizePolicy.Fixed))
-
-            # Create pseudocode label for Insertion Sort
-            pseudocode_label2 = QLabel()
-            pseudocode_label2.setObjectName("pseudocode_label2")
-            pseudocode_label2.setText("""unordered_roll_probability(target_roll, dice):
-    value_counts = {}
-    for value in target_roll:
-        if value not in value_counts:
-            value_counts[value] = 0
-        value_counts[value] += 1
-
-    num_permutations = factorial(len(target_roll))
-    for count in value_counts.values():
-        num_permutations /= factorial(count)
-
-    probability = 1
-    for i in range(len(target_roll)):
-        probability *= (1 / dice[i].num_sides)
-
-    return probability * num_permutations""")
-            pseudocode_label2.setFont(QFont("Courier New", 10))
-            pseudocode_label2.setStyleSheet("""
-                            background-color: #f5f5f5;
-                            padding: 15px;
-                            border-radius: 5px;
-                            border: 1px solid #e0e0e0;
-                            text-align: left;
-                        """)
-            pseudocode_label2.setAlignment(Qt.AlignLeft)
-            self.detail_content_layout.addWidget(pseudocode_label2)
-
-            # Add spacing between code blocks
-            self.detail_content_layout.addItem(QSpacerItem(20, 15, QSizePolicy.Minimum, QSizePolicy.Fixed))
-
-            # # Create title label for Selection Sort
-            # ss_title = QLabel("Selection Sort:")
-            # ss_title.setStyleSheet("font-weight: bold; font-size: 14px; margin-top: 10px;")
-            # ss_title.setAlignment(Qt.AlignLeft)
-            # self.detail_content_layout.addWidget(ss_title)
-
-            # Create pseudocode label for Selection Sort
-            pseudocode_label3 = QLabel()
-            pseudocode_label3.setObjectName("pseudocode_label3")
-            pseudocode_label3.setText("""sum_roll_probability(target_roll, dice):
-    target_sum = sum(target_roll)
-
-    total_outcomes = 1
-    for die in dice:
-        total_outcomes *= die.num_sides
-
-    successful_outcomes = 0
-
-    def count_successful(current_roll, index):
-        nonlocal successful_outcomes
-        if index == len(dice):
-            if sum(current_roll) == target_sum:
-                successful_outcomes += 1
-            return
-        for face in range(1, dice[index].num_sides + 1):
-            count_successful(current_roll + [face], index + 1)
-
-    count_successful([], 0)
-
-    return successful_outcomes / total_outcomes""")
-            pseudocode_label3.setFont(QFont("Courier New", 10))
-            pseudocode_label3.setStyleSheet("""
-                            background-color: #f5f5f5;
-                            padding: 15px;
-                            border-radius: 5px;
-                            border: 1px solid #e0e0e0;
-                            text-align: left;
-                        """)
-            pseudocode_label3.setAlignment(Qt.AlignLeft)
-            self.detail_content_layout.addWidget(pseudocode_label3)
-
-        # Special case for Sorting/Searching to include pseudocode
+            self.add_probability_content(sim)
         elif sim["name"] == "Sorting/Searching":
-            # Create a gap before pseudocode
-            self.detail_content_layout.addItem(QSpacerItem(60, 20, QSizePolicy.Minimum, QSizePolicy.Fixed))
-            
-            # # Create title label for Binary Search
-            # bs_title = QLabel("Binary Search:")
-            # bs_title.setStyleSheet("font-weight: bold; font-size: 14px; margin-top: 10px;")
-            # bs_title.setAlignment(Qt.AlignLeft)
-            # self.detail_content_layout.addWidget(bs_title)
-            
-            # Create pseudocode label for Binary Search
-            pseudocode_label = QLabel()
-            pseudocode_label.setObjectName("pseudocode_label")
-            pseudocode_label.setText("""binary_search(list, target):
-    left = 0
-    right = length(list) - 1
-    while left <= right:
-        mid = (left + right) // 2
-        if list[mid] == target:
-            return mid
-        elif list[mid] < target:
-            left = mid + 1
-        else:
-            right = mid - 1
-    return -1""")
-            pseudocode_label.setFont(QFont("Courier New", 10))
-            pseudocode_label.setStyleSheet("""
-                background-color: #f5f5f5;
-                padding: 15px;
-                border-radius: 5px;
-                border: 1px solid #e0e0e0;
-                text-align: left;
-            """)
-            pseudocode_label.setAlignment(Qt.AlignLeft)
-            self.detail_content_layout.addWidget(pseudocode_label)
-            
-            # Add spacing between code blocks
-            self.detail_content_layout.addItem(QSpacerItem(20, 15, QSizePolicy.Minimum, QSizePolicy.Fixed))
-            
-            # # Create title label for Insertion Sort
-            # is_title = QLabel("Insertion Sort:")
-            # is_title.setStyleSheet("font-weight: bold; font-size: 14px; margin-top: 10px;")
-            # is_title.setAlignment(Qt.AlignLeft)
-            # self.detail_content_layout.addWidget(is_title)
-            
-            # Create pseudocode label for Insertion Sort
-            pseudocode_label2 = QLabel()
-            pseudocode_label2.setObjectName("pseudocode_label2")
-            pseudocode_label2.setText("""insertion_sort(array):
-    for i from 1 to length(array) - 1:
-        key = array[i]
-        j = i - 1
-        while j >= 0 and array[j] > key:
-            array[j + 1] = array[j]
-            j = j - 1
-        array[j + 1] = key
-    return array""")
-            pseudocode_label2.setFont(QFont("Courier New", 10))
-            pseudocode_label2.setStyleSheet("""
-                background-color: #f5f5f5;
-                padding: 15px;
-                border-radius: 5px;
-                border: 1px solid #e0e0e0;
-                text-align: left;
-            """)
-            pseudocode_label2.setAlignment(Qt.AlignLeft)
-            self.detail_content_layout.addWidget(pseudocode_label2)
-            
-            # Add spacing between code blocks
-            self.detail_content_layout.addItem(QSpacerItem(20, 15, QSizePolicy.Minimum, QSizePolicy.Fixed))
-            
-            # # Create title label for Selection Sort
-            # ss_title = QLabel("Selection Sort:")
-            # ss_title.setStyleSheet("font-weight: bold; font-size: 14px; margin-top: 10px;")
-            # ss_title.setAlignment(Qt.AlignLeft)
-            # self.detail_content_layout.addWidget(ss_title)
-            
-            # Create pseudocode label for Selection Sort
-            pseudocode_label3 = QLabel()
-            pseudocode_label3.setObjectName("pseudocode_label3")
-            pseudocode_label3.setText("""selection_sort(array):
-    for i from 0 to length(array) - 1:
-        min_index = i
-        for j from i + 1 to length(array) - 1:
-            if array[j] < array[min_index]:
-                min_index = j
-        if min_index != i:
-            swap array[i] and array[min_index]
-    return array""")
-            pseudocode_label3.setFont(QFont("Courier New", 10))
-            pseudocode_label3.setStyleSheet("""
-                background-color: #f5f5f5;
-                padding: 15px;
-                border-radius: 5px;
-                border: 1px solid #e0e0e0;
-                text-align: left;
-            """)
-            pseudocode_label3.setAlignment(Qt.AlignLeft)
-            self.detail_content_layout.addWidget(pseudocode_label3)
-
+            self.add_sorting_content(sim)
         elif sim["name"] == "Graph Manipulation":
-            # Extend the description
-            self.detail_description.setText(
-                sim["description"]
-            )
-
-            # Spacer before pseudocode
-            self.detail_content_layout.addItem(
-                QSpacerItem(0, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
-            )
-
-            # --- Adjacency List Pseudocode ---
-            pnl = QLabel()
-            pnl.setObjectName("pseudocode_adjlist")
-            pnl.setText(
-                "def build_adjacency_list(graph):\n"
-                "    # initialize empty list for each node\n"
-                "    adjacency = { node: [] for node in graph.nodes() }\n"
-                "    # populate edges\n"
-                "    for u, v in graph.edges():\n"
-                "        adjacency[u].append(v)\n"
-                "        adjacency[v].append(u)  # if undirected\n"
-                "    return adjacency"
-            )
-            pnl.setFont(QFont("Courier New", 10))
-            pnl.setStyleSheet(
-                "background-color: #f5f5f5;"
-                "padding: 10px;"
-                "border-radius: 4px;"
-                "border: 1px solid #ddd;"
-            )
-            pnl.setAlignment(Qt.AlignLeft | Qt.AlignTop)
-            self.detail_content_layout.addWidget(pnl)
-
-            # Small spacer between code blocks
-            self.detail_content_layout.addItem(
-                QSpacerItem(0, 15, QSizePolicy.Minimum, QSizePolicy.Fixed)
-            )
-
-            # --- Adjacency Matrix Pseudocode ---
-            pmx = QLabel()
-            pmx.setObjectName("pseudocode_adjmatrix")
-            pmx.setText(
-                "def build_adjacency_matrix(graph):\n"
-                "    n = graph.number_of_nodes()\n"
-                "    # create n×n zero matrix\n"
-                "    matrix = [[0]*n for _ in range(n)]\n"
-                "    # fill in edges\n"
-                "    for u, v in graph.edges():\n"
-                "        matrix[u][v] = 1\n"
-                "        matrix[v][u] = 1  # if undirected\n"
-                "    return matrix"
-            )
-            pmx.setFont(QFont("Courier New", 10))
-            pmx.setStyleSheet(
-                "background-color: #f5f5f5;"
-                "padding: 10px;"
-                "border-radius: 4px;"
-                "border: 1px solid #ddd;"
-            )
-            pmx.setAlignment(Qt.AlignLeft | Qt.AlignTop)
-            self.detail_content_layout.addWidget(pmx)
-
-            # Spacer before launching external visualization
-            self.detail_content_layout.addItem(
-                QSpacerItem(0, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
-            )
-
+            self.add_graph_content(sim)
         elif sim["name"] == "Set Theory":
-            # Extend the description
-            self.detail_description.setText(
-                sim["description"]
-            )
+            self.add_set_theory_content(sim)
 
-            # Spacer before pseudocode
-            self.detail_content_layout.addItem(
-                QSpacerItem(0, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
-            )
-
-            # --- Union Pseudocode ---
-            pu = QLabel()
-            pu.setObjectName("pseudocode_union")
-            pu.setText(
-                "def union(A, B):\n"
-                "    # return a new set containing all elements in A or B\n"
-                "    result = set()\n"
-                "    for x in A:\n"
-                "        result.add(x)\n"
-                "    for x in B:\n"
-                "        result.add(x)\n"
-                "    return result"
-            )
-            pu.setFont(QFont("Courier New", 10))
-            pu.setStyleSheet(
-                "background-color: #f5f5f5;"
-                "padding: 10px;"
-                "border-radius: 4px;"
-                "border: 1px solid #ddd;"
-            )
-            pu.setAlignment(Qt.AlignLeft | Qt.AlignTop)
-            self.detail_content_layout.addWidget(pu)
-
-            # Spacer
-            self.detail_content_layout.addItem(
-                QSpacerItem(0, 15, QSizePolicy.Minimum, QSizePolicy.Fixed)
-            )
-
-            # --- Intersection Pseudocode ---
-            pi = QLabel()
-            pi.setObjectName("pseudocode_intersection")
-            pi.setText(
-                "def intersection(A, B):\n"
-                "    # return a new set containing elements in both A and B\n"
-                "    result = set()\n"
-                "    for x in A:\n"
-                "        if x in B:\n"
-                "            result.add(x)\n"
-                "    return result"
-            )
-            pi.setFont(QFont("Courier New", 10))
-            pi.setStyleSheet(
-                "background-color: #f5f5f5;"
-                "padding: 10px;"
-                "border-radius: 4px;"
-                "border: 1px solid #ddd;"
-            )
-            pi.setAlignment(Qt.AlignLeft | Qt.AlignTop)
-            self.detail_content_layout.addWidget(pi)
-
-            # Spacer
-            self.detail_content_layout.addItem(
-                QSpacerItem(0, 15, QSizePolicy.Minimum, QSizePolicy.Fixed)
-            )
-
-            # --- Difference Pseudocode ---
-            pd = QLabel()
-            pd.setObjectName("pseudocode_difference")
-            pd.setText(
-                "def difference(A, B):\n"
-                "    # return elements in A that are not in B\n"
-                "    result = set()\n"
-                "    for x in A:\n"
-                "        if x not in B:\n"
-                "            result.add(x)\n"
-                "    return result"
-            )
-            pd.setFont(QFont("Courier New", 10))
-            pd.setStyleSheet(
-                "background-color: #f5f5f5;"
-                "padding: 10px;"
-                "border-radius: 4px;"
-                "border: 1px solid #ddd;"
-            )
-            pd.setAlignment(Qt.AlignLeft | Qt.AlignTop)
-            self.detail_content_layout.addWidget(pd)
-
-            # Spacer
-            self.detail_content_layout.addItem(
-                QSpacerItem(0, 15, QSizePolicy.Minimum, QSizePolicy.Fixed)
-            )
-
-            # --- Symmetric Difference Pseudocode ---
-            ps = QLabel()
-            ps.setObjectName("pseudocode_symdifference")
-            ps.setText(
-                "def symmetric_difference(A, B):\n"
-                "    # return elements in A or B but not both\n"
-                "    result = set()\n"
-                "    for x in A:\n"
-                "        if x not in B:\n"
-                "            result.add(x)\n"
-                "    for x in B:\n"
-                "        if x not in A:\n"
-                "            result.add(x)\n"
-                "    return result"
-            )
-            ps.setFont(QFont("Courier New", 10))
-            ps.setStyleSheet(
-                "background-color: #f5f5f5;"
-                "padding: 10px;"
-                "border-radius: 4px;"
-                "border: 1px solid #ddd;"
-            )
-            ps.setAlignment(Qt.AlignLeft | Qt.AlignTop)
-            self.detail_content_layout.addWidget(ps)
-
-            # Spacer before launch button
-            self.detail_content_layout.addItem(
-                QSpacerItem(0, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
-            )
-
-        
+        # Configure the launch button
         self.launch_button.setStyleSheet(f"""
             QPushButton {{
                 background-color: {sim['color']};
@@ -811,6 +851,521 @@ visit(location, path):
 
         self.home_widget.hide()
         self.detail_widget.show()
+
+    def clear_dynamic_content(self):
+        """Remove all dynamically added content (pseudocode, spacers) from the detail layout"""
+        # Get the position of the title, description and launch button
+        title_pos = self.detail_content_layout.indexOf(self.detail_title)
+        desc_pos = self.detail_content_layout.indexOf(self.detail_description)
+        launch_pos = self.detail_content_layout.indexOf(self.launch_button)
+
+        # We need to keep track of the indices of items to remove
+        items_to_remove = []
+
+        # Find all widgets and spacers between description and launch button
+        for i in range(desc_pos + 1, launch_pos):
+            items_to_remove.append(i)
+
+        # Remove items in reverse (to avoid index shifting)
+        for i in sorted(items_to_remove, reverse=True):
+            item = self.detail_content_layout.takeAt(i)
+            if item.widget():
+                item.widget().deleteLater()
+            else:  # It's a spacer
+                self.detail_content_layout.removeItem(item)
+
+    def add_mazerunner_content(self, sim):
+        """Add MazeRunner specific content"""
+        self.detail_description.setText(
+            sim["description"] + "\n How might you change the algorithm if the maze had loops?")
+
+        # Add spacer
+        self.detail_content_layout.insertItem(
+            self.detail_content_layout.indexOf(self.launch_button),
+            QSpacerItem(60, 30, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        )
+
+        # Add pseudocode
+        pseudocode_label = QLabel()
+        pseudocode_label.setObjectName("pseudocode_label")
+        pseudocode_label.setText("""DFS(Maze):
+        path = []
+        visit(start_node, path)
+    visit(location, path):
+        if location == destination
+            path.append(location)
+            return True
+        for each adjacent node neighbor
+            if visit(neighbor, path)
+                path.append(location)
+                return True""")
+        pseudocode_label.setFont(QFont("Courier New", 10))
+        pseudocode_label.setStyleSheet("""
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+            text-align: left;
+        """)
+        pseudocode_label.setAlignment(Qt.AlignLeft)
+
+        # Insert before launch button
+        self.detail_content_layout.insertWidget(
+            self.detail_content_layout.indexOf(self.launch_button),
+            pseudocode_label
+        )
+
+    def add_probability_content(self, sim):
+        """Add Probability specific content"""
+
+        # Add spacer
+        self.detail_content_layout.insertItem(
+            self.detail_content_layout.indexOf(self.launch_button),
+            QSpacerItem(60, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        )
+
+        # Create pseudocode label for Exact Roll Probability
+        pseudocode_label = QLabel()
+        pseudocode_label.setObjectName("pseudocode_label")
+        pseudocode_label.setText("""exact_roll_probability():
+        probability = 1
+        for die in dice:
+            probability *= (1 / die.num_sides)
+        return probability
+        """)
+        pseudocode_label.setFont(QFont("Courier New", 10))
+        pseudocode_label.setStyleSheet("""
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+            text-align: left;
+        """)
+        pseudocode_label.setAlignment(Qt.AlignLeft)
+
+        # Insert before launch button
+        self.detail_content_layout.insertWidget(
+            self.detail_content_layout.indexOf(self.launch_button),
+            pseudocode_label
+        )
+
+        # Add spacing between code blocks
+        self.detail_content_layout.insertItem(
+            self.detail_content_layout.indexOf(self.launch_button),
+            QSpacerItem(20, 15, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        )
+
+        # Create pseudocode label for Unordered Roll Probability
+        pseudocode_label2 = QLabel()
+        pseudocode_label2.setObjectName("pseudocode_label2")
+        pseudocode_label2.setText("""unordered_roll_probability(target_roll, dice):
+        value_counts = {}
+        for value in target_roll:
+            if value not in value_counts:
+                value_counts[value] = 0
+            value_counts[value] += 1
+
+        num_permutations = factorial(len(target_roll))
+        for count in value_counts.values():
+            num_permutations /= factorial(count)
+
+        probability = 1
+        for i in range(len(target_roll)):
+            probability *= (1 / dice[i].num_sides)
+
+        return probability * num_permutations""")
+        pseudocode_label2.setFont(QFont("Courier New", 10))
+        pseudocode_label2.setStyleSheet("""
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+            text-align: left;
+        """)
+        pseudocode_label2.setAlignment(Qt.AlignLeft)
+
+        # Insert before launch button
+        self.detail_content_layout.insertWidget(
+            self.detail_content_layout.indexOf(self.launch_button),
+            pseudocode_label2
+        )
+
+        # Add spacing between code blocks
+        self.detail_content_layout.insertItem(
+            self.detail_content_layout.indexOf(self.launch_button),
+            QSpacerItem(20, 15, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        )
+
+        # Create pseudocode label for Sum Roll Probability
+        pseudocode_label3 = QLabel()
+        pseudocode_label3.setObjectName("pseudocode_label3")
+        pseudocode_label3.setText("""sum_roll_probability(target_roll, dice):
+        target_sum = sum(target_roll)
+
+        total_outcomes = 1
+        for die in dice:
+            total_outcomes *= die.num_sides
+
+        successful_outcomes = 0
+
+        def count_successful(current_roll, index):
+            nonlocal successful_outcomes
+            if index == len(dice):
+                if sum(current_roll) == target_sum:
+                    successful_outcomes += 1
+                return
+            for face in range(1, dice[index].num_sides + 1):
+                count_successful(current_roll + [face], index + 1)
+
+        count_successful([], 0)
+
+        return successful_outcomes / total_outcomes""")
+        pseudocode_label3.setFont(QFont("Courier New", 10))
+        pseudocode_label3.setStyleSheet("""
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+            text-align: left;
+        """)
+        pseudocode_label3.setAlignment(Qt.AlignLeft)
+
+        # Insert before launch button
+        self.detail_content_layout.insertWidget(
+            self.detail_content_layout.indexOf(self.launch_button),
+            pseudocode_label3
+        )
+
+    def add_sorting_content(self, sim):
+        """Add Sorting/Searching specific content"""
+
+        # Add spacer
+        self.detail_content_layout.insertItem(
+            self.detail_content_layout.indexOf(self.launch_button),
+            QSpacerItem(60, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        )
+
+        # Create pseudocode label for Binary Search
+        pseudocode_label = QLabel()
+        pseudocode_label.setObjectName("pseudocode_label")
+        pseudocode_label.setText("""binary_search(list, target):
+        left = 0
+        right = length(list) - 1
+        while left <= right:
+            mid = (left + right) // 2
+            if list[mid] == target:
+                return mid
+            elif list[mid] < target:
+                left = mid + 1
+            else:
+                right = mid - 1
+        return -1""")
+        pseudocode_label.setFont(QFont("Courier New", 10))
+        pseudocode_label.setStyleSheet("""
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+            text-align: left;
+        """)
+        pseudocode_label.setAlignment(Qt.AlignLeft)
+
+        # Insert before launch button
+        self.detail_content_layout.insertWidget(
+            self.detail_content_layout.indexOf(self.launch_button),
+            pseudocode_label
+        )
+
+        # Add spacing between code blocks
+        self.detail_content_layout.insertItem(
+            self.detail_content_layout.indexOf(self.launch_button),
+            QSpacerItem(20, 15, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        )
+
+        # Create pseudocode label for Insertion Sort
+        pseudocode_label2 = QLabel()
+        pseudocode_label2.setObjectName("pseudocode_label2")
+        pseudocode_label2.setText("""insertion_sort(array):
+        for i from 1 to length(array) - 1:
+            key = array[i]
+            j = i - 1
+            while j >= 0 and array[j] > key:
+                array[j + 1] = array[j]
+                j = j - 1
+            array[j + 1] = key
+        return array""")
+        pseudocode_label2.setFont(QFont("Courier New", 10))
+        pseudocode_label2.setStyleSheet("""
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+            text-align: left;
+        """)
+        pseudocode_label2.setAlignment(Qt.AlignLeft)
+
+        # Insert before launch button
+        self.detail_content_layout.insertWidget(
+            self.detail_content_layout.indexOf(self.launch_button),
+            pseudocode_label2
+        )
+
+        # Add spacing between code blocks
+        self.detail_content_layout.insertItem(
+            self.detail_content_layout.indexOf(self.launch_button),
+            QSpacerItem(20, 15, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        )
+
+        # Create pseudocode label for Selection Sort
+        pseudocode_label3 = QLabel()
+        pseudocode_label3.setObjectName("pseudocode_label3")
+        pseudocode_label3.setText("""selection_sort(array):
+        for i from 0 to length(array) - 1:
+            min_index = i
+            for j from i + 1 to length(array) - 1:
+                if array[j] < array[min_index]:
+                    min_index = j
+            if min_index != i:
+                swap array[i] and array[min_index]
+        return array""")
+        pseudocode_label3.setFont(QFont("Courier New", 10))
+        pseudocode_label3.setStyleSheet("""
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+            text-align: left;
+        """)
+        pseudocode_label3.setAlignment(Qt.AlignLeft)
+
+        # Insert before launch button
+        self.detail_content_layout.insertWidget(
+            self.detail_content_layout.indexOf(self.launch_button),
+            pseudocode_label3
+        )
+
+    def add_graph_content(self, sim):
+        """Add Graph Manipulation specific content"""
+
+        # Add spacer
+        self.detail_content_layout.insertItem(
+            self.detail_content_layout.indexOf(self.launch_button),
+            QSpacerItem(0, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        )
+
+        # Adjacency List Pseudocode
+        pnl = QLabel()
+        pnl.setObjectName("pseudocode_adjlist")
+        pnl.setText(
+            "def build_adjacency_list(graph):\n"
+            "    # initialize empty list for each node\n"
+            "    adjacency = { node: [] for node in graph.nodes() }\n"
+            "    # populate edges\n"
+            "    for u, v in graph.edges():\n"
+            "        adjacency[u].append(v)\n"
+            "        adjacency[v].append(u)  # if undirected\n"
+            "    return adjacency"
+        )
+        pnl.setFont(QFont("Courier New", 10))
+        pnl.setStyleSheet(
+            "background-color: #f5f5f5;"
+            "padding: 10px;"
+            "border-radius: 4px;"
+            "border: 1px solid #ddd;"
+        )
+        pnl.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+
+        # Insert before launch button
+        self.detail_content_layout.insertWidget(
+            self.detail_content_layout.indexOf(self.launch_button),
+            pnl
+        )
+
+        # Add spacing between code blocks
+        self.detail_content_layout.insertItem(
+            self.detail_content_layout.indexOf(self.launch_button),
+            QSpacerItem(0, 15, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        )
+
+        # Adjacency Matrix Pseudocode
+        pmx = QLabel()
+        pmx.setObjectName("pseudocode_adjmatrix")
+        pmx.setText(
+            "def build_adjacency_matrix(graph):\n"
+            "    n = graph.number_of_nodes()\n"
+            "    # create n×n zero matrix\n"
+            "    matrix = [[0]*n for _ in range(n)]\n"
+            "    # fill in edges\n"
+            "    for u, v in graph.edges():\n"
+            "        matrix[u][v] = 1\n"
+            "        matrix[v][u] = 1  # if undirected\n"
+            "    return matrix"
+        )
+        pmx.setFont(QFont("Courier New", 10))
+        pmx.setStyleSheet(
+            "background-color: #f5f5f5;"
+            "padding: 10px;"
+            "border-radius: 4px;"
+            "border: 1px solid #ddd;"
+        )
+        pmx.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+
+        # Insert before launch button
+        self.detail_content_layout.insertWidget(
+            self.detail_content_layout.indexOf(self.launch_button),
+            pmx
+        )
+
+        # Add spacing before launch button
+        self.detail_content_layout.insertItem(
+            self.detail_content_layout.indexOf(self.launch_button),
+            QSpacerItem(0, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        )
+
+    def add_set_theory_content(self, sim):
+        """Add Set Theory specific content"""
+
+        # Add spacer
+        self.detail_content_layout.insertItem(
+            self.detail_content_layout.indexOf(self.launch_button),
+            QSpacerItem(0, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        )
+
+        # Union Pseudocode
+        pu = QLabel()
+        pu.setObjectName("pseudocode_union")
+        pu.setText(
+            "def union(A, B):\n"
+            "    # return a new set containing all elements in A or B\n"
+            "    result = set()\n"
+            "    for x in A:\n"
+            "        result.add(x)\n"
+            "    for x in B:\n"
+            "        result.add(x)\n"
+            "    return result"
+        )
+        pu.setFont(QFont("Courier New", 10))
+        pu.setStyleSheet(
+            "background-color: #f5f5f5;"
+            "padding: 10px;"
+            "border-radius: 4px;"
+            "border: 1px solid #ddd;"
+        )
+        pu.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+
+        # Insert before launch button
+        self.detail_content_layout.insertWidget(
+            self.detail_content_layout.indexOf(self.launch_button),
+            pu
+        )
+
+        # Add spacing between code blocks
+        self.detail_content_layout.insertItem(
+            self.detail_content_layout.indexOf(self.launch_button),
+            QSpacerItem(0, 15, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        )
+
+        # Intersection Pseudocode
+        pi = QLabel()
+        pi.setObjectName("pseudocode_intersection")
+        pi.setText(
+            "def intersection(A, B):\n"
+            "    # return a new set containing elements in both A and B\n"
+            "    result = set()\n"
+            "    for x in A:\n"
+            "        if x in B:\n"
+            "            result.add(x)\n"
+            "    return result"
+        )
+        pi.setFont(QFont("Courier New", 10))
+        pi.setStyleSheet(
+            "background-color: #f5f5f5;"
+            "padding: 10px;"
+            "border-radius: 4px;"
+            "border: 1px solid #ddd;"
+        )
+        pi.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+
+        # Insert before launch button
+        self.detail_content_layout.insertWidget(
+            self.detail_content_layout.indexOf(self.launch_button),
+            pi
+        )
+
+        # Add spacing between code blocks
+        self.detail_content_layout.insertItem(
+            self.detail_content_layout.indexOf(self.launch_button),
+            QSpacerItem(0, 15, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        )
+
+        # Difference Pseudocode
+        pd = QLabel()
+        pd.setObjectName("pseudocode_difference")
+        pd.setText(
+            "def difference(A, B):\n"
+            "    # return elements in A that are not in B\n"
+            "    result = set()\n"
+            "    for x in A:\n"
+            "        if x not in B:\n"
+            "            result.add(x)\n"
+            "    return result"
+        )
+        pd.setFont(QFont("Courier New", 10))
+        pd.setStyleSheet(
+            "background-color: #f5f5f5;"
+            "padding: 10px;"
+            "border-radius: 4px;"
+            "border: 1px solid #ddd;"
+        )
+        pd.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+
+        # Insert before launch button
+        self.detail_content_layout.insertWidget(
+            self.detail_content_layout.indexOf(self.launch_button),
+            pd
+        )
+
+        # Add spacing between code blocks
+        self.detail_content_layout.insertItem(
+            self.detail_content_layout.indexOf(self.launch_button),
+            QSpacerItem(0, 15, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        )
+
+        # Symmetric Difference Pseudocode
+        ps = QLabel()
+        ps.setObjectName("pseudocode_symdifference")
+        ps.setText(
+            "def symmetric_difference(A, B):\n"
+            "    # return elements in A or B but not both\n"
+            "    result = set()\n"
+            "    for x in A:\n"
+            "        if x not in B:\n"
+            "            result.add(x)\n"
+            "    for x in B:\n"
+            "        if x not in A:\n"
+            "            result.add(x)\n"
+            "    return result"
+        )
+        ps.setFont(QFont("Courier New", 10))
+        ps.setStyleSheet(
+            "background-color: #f5f5f5;"
+            "padding: 10px;"
+            "border-radius: 4px;"
+            "border: 1px solid #ddd;"
+        )
+        ps.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+
+        # Insert before launch button
+        self.detail_content_layout.insertWidget(
+            self.detail_content_layout.indexOf(self.launch_button),
+            ps
+        )
+
+        # Add spacing before launch button
+        self.detail_content_layout.insertItem(
+            self.detail_content_layout.indexOf(self.launch_button),
+            QSpacerItem(0, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        )
 
     def show_home_screen(self):
         # Return to home screen
