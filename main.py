@@ -102,7 +102,7 @@ class PygameQtApp(QMainWindow):
             {
                 "name": "MazeRunner",
                 "external": "maze.py",
-                "description": "A visualization that demonstrates pathfinding algorithms in a maze environment. Explore how algorithms like A*, Dijkstra's, and Breadth-First Search navigate through complex mazes.",
+                "description": "A visualization that demonstrates pathfinding algorithms in a maze environment. Explore how algorithms like Breadth-First Search, and Depth-First Search navigate through complex mazes, and how this might be thought of as searching a tree.",
                 "color": "#4CAF50"  # Green
             },
             {
@@ -114,7 +114,7 @@ class PygameQtApp(QMainWindow):
             {
                 "name": "Sorting/Searching",
                 "external": "sort.py",
-                "description": "Visualize different sorting and searching algorithms in action. Compare the efficiency and behavior of algorithms like Bubble Sort, Quick Sort, Merge Sort, and Binary Search.",
+                "description": "Visualize different sorting and searching algorithms in action. Compare the efficiency and behavior of  insertion sort, selection sort, bubble sort, quick sort, and linear and binary search.",
                 "color": "#9C27B0"  # Purple
             },
             {
@@ -309,6 +309,54 @@ class PygameQtApp(QMainWindow):
 
         self.detail_title.setText(sim["name"])
         self.detail_description.setText(sim["description"])
+        
+        # Remove any existing pseudocode label if it exists
+        for i in reversed(range(self.detail_content_layout.count())):
+            widget = self.detail_content_layout.itemAt(i).widget()
+            if widget is not None and widget.objectName() == "pseudocode_label":
+                widget.deleteLater()
+        
+        # Special case for MazeRunner to include pseudocode
+        if sim["name"] == "MazeRunner":
+            # Create a gap before pseudocode
+            self.detail_content_layout.addItem(QSpacerItem(20, 30, QSizePolicy.Minimum, QSizePolicy.Fixed))
+            
+            # Create pseudocode label
+            pseudocode_label = QLabel()
+            pseudocode_label.setObjectName("pseudocode_label")
+            pseudocode_label.setText("""DFS(Maze):
+        path = []
+        visit(start_node, path)
+    visit(location, path):
+        if location == destination
+            path.append(location)
+            return True
+        for each adjacent node neighbor
+            if visit(neighbor, path)
+                return True""")
+            pseudocode_label.setFont(QFont("Courier New", 12))
+            pseudocode_label.setStyleSheet("""
+                background-color: #f5f5f5;
+                padding: 15px;
+                border-radius: 5px;
+                border: 1px solid #e0e0e0;
+                text-align: left;
+            """)
+            pseudocode_label.setAlignment(Qt.AlignLeft)
+            
+            # Insert pseudocode label before the spacer that comes before the launch button
+            spacer_index = -1
+            for i in range(self.detail_content_layout.count()):
+                if isinstance(self.detail_content_layout.itemAt(i), QSpacerItem):
+                    spacer_index = i
+                    break
+            
+            if spacer_index != -1:
+                self.detail_content_layout.insertWidget(spacer_index, pseudocode_label)
+            else:
+                # Fallback if spacer not found
+                self.detail_content_layout.addWidget(pseudocode_label)
+        
         self.launch_button.setStyleSheet(f"""
             QPushButton {{
                 background-color: {sim['color']};
