@@ -332,13 +332,13 @@ class PygameQtApp(QMainWindow):
         self.home_widget.show()
 
     def launch_visualization(self):
-        # Launch the external visualization when the button is clicked
+        # Launch the external visualization without blocking the main window
         if self.current_visualization is not None:
             external_file = self.simulations[self.current_visualization]["external"]
             try:
-                self.hide()
-                subprocess.run([sys.executable, external_file])
-                self.show()
+                # Use Popen instead of run for non-blocking execution
+                subprocess.Popen([sys.executable, external_file])
+                # No need to hide and show the main window anymore
             except Exception as e:
                 print(f"Error running external visualization: {e}")
 
