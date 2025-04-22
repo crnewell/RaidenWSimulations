@@ -318,8 +318,9 @@ class PygameQtApp(QMainWindow):
         
         # Special case for MazeRunner to include pseudocode
         if sim["name"] == "MazeRunner":
+            self.detail_description.setText(sim["description"] + "\n How might you change the algorithm if the maze had loops?")
             # Create a gap before pseudocode
-            self.detail_content_layout.addItem(QSpacerItem(20, 30, QSizePolicy.Minimum, QSizePolicy.Fixed))
+            self.detail_content_layout.addItem(QSpacerItem(60, 30, QSizePolicy.Minimum, QSizePolicy.Fixed))
             
             # Create pseudocode label
             pseudocode_label = QLabel()
@@ -334,7 +335,7 @@ class PygameQtApp(QMainWindow):
         for each adjacent node neighbor
             if visit(neighbor, path)
                 return True""")
-            pseudocode_label.setFont(QFont("Courier New", 12))
+            pseudocode_label.setFont(QFont("Courier New", 10))
             pseudocode_label.setStyleSheet("""
                 background-color: #f5f5f5;
                 padding: 15px;
