@@ -232,10 +232,36 @@ class PygameQtApp(QMainWindow):
 
         self.detail_layout.addWidget(detail_header)
 
+        # Add scroll area for content
+        detail_scroll = QScrollArea()
+        detail_scroll.setWidgetResizable(True)
+        detail_scroll.setFrameShape(QFrame.NoFrame)
+        detail_scroll.setStyleSheet("""
+            QScrollArea {
+                background-color: transparent;
+                border: none;
+            }
+            QScrollBar:vertical {
+                border: none;
+                background: #f0f0f0;
+                width: 10px;
+                margin: 0px;
+            }
+            QScrollBar::handle:vertical {
+                background: #c0c0c0;
+                min-height: 20px;
+                border-radius: 5px;
+            }
+            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+                height: 0px;
+            }
+        """)
+
         self.detail_content = QWidget()
         self.detail_content_layout = QVBoxLayout(self.detail_content)
-        self.detail_content_layout.setContentsMargins(60, 40, 60, 40)
-        self.detail_content_layout.setAlignment(Qt.AlignCenter)
+        # Reduce margins to allow more content space
+        self.detail_content_layout.setContentsMargins(40, 30, 40, 30)
+        self.detail_content_layout.setAlignment(Qt.AlignTop)  # Align to top
 
         self.detail_title = QLabel()
         self.detail_title.setStyleSheet("font-size: 32px; font-weight: bold; color: #333; margin-bottom: 20px;")
@@ -248,7 +274,8 @@ class PygameQtApp(QMainWindow):
         self.detail_description.setAlignment(Qt.AlignCenter)
         self.detail_content_layout.addWidget(self.detail_description)
 
-        self.detail_content_layout.addItem(QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding))
+        # Remove the spacer that could push content up
+        # self.detail_content_layout.addItem(QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding))
 
         self.launch_button = QPushButton("Open Visualization")
         self.launch_button.setStyleSheet("""
@@ -259,6 +286,7 @@ class PygameQtApp(QMainWindow):
                 padding: 15px 32px;
                 border-radius: 10px;
                 min-width: 250px;
+                margin-top: 20px;
             }
             QPushButton:hover {
                 background-color: #324cdd;
@@ -274,7 +302,13 @@ class PygameQtApp(QMainWindow):
         note.setAlignment(Qt.AlignCenter)
         self.detail_content_layout.addWidget(note)
 
-        self.detail_layout.addWidget(self.detail_content)
+        # Add a spacer at the bottom to ensure good padding when scrolling
+        self.detail_content_layout.addItem(QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Fixed))
+
+        # Set the content widget to the scroll area
+        detail_scroll.setWidget(self.detail_content)
+        self.detail_layout.addWidget(detail_scroll)
+
         self.main_layout.addWidget(self.detail_widget)
 
     def create_visualization_cards(self):
