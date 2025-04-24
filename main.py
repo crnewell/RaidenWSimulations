@@ -77,6 +77,26 @@ class VisualizationCard(QFrame):
         shadow.setOffset(0, 5)
         return shadow
 
+def open_executable(relative_path):
+    try:
+        # Handle PyInstaller .app bundle on macOS
+        if getattr(sys, 'frozen', False) and sys.platform == "darwin":
+            base_path = os.path.abspath(os.path.join(os.path.dirname(sys.executable), "../../../"))
+        else:
+            base_path = os.path.dirname(sys.executable if getattr(sys, 'frozen', False) else __file__)
+
+        full_path = os.path.join(base_path, relative_path)
+
+        if sys.platform.startswith('darwin'):
+            subprocess.Popen(['open', full_path])
+        elif sys.platform.startswith('linux'):
+            subprocess.Popen(['xdg-open', full_path])
+        elif sys.platform.startswith('win'):
+            os.startfile(full_path)
+        else:
+            print("Unsupported OS")
+    except Exception as e:
+        print(f"Error running external visualization: {e}")
 
 class PygameQtApp(QMainWindow):
     def __init__(self):
@@ -101,31 +121,31 @@ class PygameQtApp(QMainWindow):
         self.simulations = [
             {
                 "name": "MazeRunner",
-                "external": "maze.py",
+                "external": "exes/maze.app",
                 "description": "Solve a maze by using the breadth-first or depth-first searches on the tree representation of the maze.",
                 "color": "#4CAF50"  # Green
             },
             {
                 "name": "Graph Manipulation",
-                "external": "adjlist.py",
+                "external": "exes/adjlist.app",
                 "description": "Create a graph and convert it to an adjacency list, or vice versa.",
                 "color": "#2196F3"  # Blue
             },
             {
                 "name": "Sorting/Searching",
-                "external": "sort.py",
+                "external": "exes/sort.app",
                 "description": "Visualize different sorting and searching algorithms in action.",
                 "color": "#9C27B0"  # Purple
             },
             {
                 "name": "Probability",
-                "external": "probability.py",
+                "external": "exes/probability.app",
                 "description": "Understand basic probability concepts through a dice simulation",
                 "color": "#FF9800"  # Orange
             },
             {
                 "name": "Set Theory",
-                "external": "setTheory.py",
+                "external": "exes/setTheory.app",
                 "description": "Learn about unions, intersections, and other common set operations through playing cards",
                 "color": "#E91E63"  # Pink
             }
@@ -902,14 +922,16 @@ def visit(location, path, visited_nodes):
         self.detail_widget.hide()
         self.home_widget.show()
 
+
     def launch_visualization(self):
         # Launch the external visualization without blocking the main window
         if self.current_visualization is not None:
             external_file = self.simulations[self.current_visualization]["external"]
             try:
                 # Use Popen instead of run for non-blocking execution
-                subprocess.Popen([sys.executable, external_file])
+                # subprocess.Popen([sys.executable, external_file])
                 # No need to hide and show the main window anymore
+                open_executable(external_file)
             except Exception as e:
                 print(f"Error running external visualization: {e}")
 
