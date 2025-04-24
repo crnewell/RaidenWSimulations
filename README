@@ -1,13 +1,29 @@
-installation instructions:
+User Instructions (Python Script):
+
+Clone repository from github
 
 create virtual environment (if neccessary):
 python -m venv ./venv
 
-activate virtual environment, and run
-pip install -r requirements.txt
-
-Then activate the virtual environment with
+Then activate the virtual environment with:
 ./venv/Scripts/activate 
 
-Then run
+Now install the dependencies (if neccessary):
+pip install -r requirements.txt
+
+Then run the following to see the simulation:
 python main.py
+
+
+#########################################
+User instructions (Windows Executable):
+
+Download the WindowsExecutable.zip file from Google Drive
+
+Unzip the contents, and do not move main.exe or the sub folder.
+
+Run main.exe from command line or file explorer
+
+
+##########################################
+User instructions (Mac Executable):
