@@ -9,8 +9,8 @@ This repository contains a simulation suite runnable either from source (Python)
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/your-repo-name.git
-cd your-repo-name
+git clone https://github.com/crnewell/RaidenWSimulations.git
+cd RaidenWSimulations
 ```
 
 ### 2. Create a Virtual Environment *(if necessary)*
